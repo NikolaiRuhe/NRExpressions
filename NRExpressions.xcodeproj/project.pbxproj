@@ -1,0 +1,551 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		911D4C54149A650100C917D6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 911D4C53149A650100C917D6 /* Foundation.framework */; };
+		91C3888516F8E220006306D1 /* NRXError.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3887916F8E220006306D1 /* NRXError.m */; };
+		91C3888716F8E220006306D1 /* NRXError.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3887916F8E220006306D1 /* NRXError.m */; };
+		91C3888816F8E220006306D1 /* NRXExpressionNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3887B16F8E220006306D1 /* NRXExpressionNode.m */; };
+		91C3888A16F8E220006306D1 /* NRXExpressionNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3887B16F8E220006306D1 /* NRXExpressionNode.m */; };
+		91C3888B16F8E220006306D1 /* NRXInterpreter.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3887D16F8E220006306D1 /* NRXInterpreter.m */; };
+		91C3888D16F8E220006306D1 /* NRXInterpreter.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3887D16F8E220006306D1 /* NRXInterpreter.m */; };
+		91C3888E16F8E220006306D1 /* NRXLexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 91C3887E16F8E220006306D1 /* NRXLexer.lm */; };
+		91C3889016F8E220006306D1 /* NRXLexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 91C3887E16F8E220006306D1 /* NRXLexer.lm */; };
+		91C3889116F8E220006306D1 /* NRXParser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 91C3888016F8E220006306D1 /* NRXParser.ym */; };
+		91C3889316F8E220006306D1 /* NRXParser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 91C3888016F8E220006306D1 /* NRXParser.ym */; };
+		91C3889416F8E220006306D1 /* NRXStatementNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3888216F8E220006306D1 /* NRXStatementNode.m */; };
+		91C3889616F8E220006306D1 /* NRXStatementNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3888216F8E220006306D1 /* NRXStatementNode.m */; };
+		91C3889716F8E220006306D1 /* NRXTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3888416F8E220006306D1 /* NRXTypes.m */; };
+		91C3889916F8E220006306D1 /* NRXTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3888416F8E220006306D1 /* NRXTypes.m */; };
+		91C388A216F8E278006306D1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3889B16F8E278006306D1 /* main.m */; };
+		91C388A316F8E278006306D1 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91C3889C16F8E278006306D1 /* MainMenu.xib */; };
+		91C388A416F8E278006306D1 /* NRAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3889E16F8E278006306D1 /* NRAppDelegate.m */; };
+		91C388A516F8E278006306D1 /* NRExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C388A016F8E278006306D1 /* NRExpression.m */; };
+		91C388AE16F8E288006306D1 /* mandelprot.py in Resources */ = {isa = PBXBuildFile; fileRef = 91C388A916F8E288006306D1 /* mandelprot.py */; };
+		91C388B016F8E288006306D1 /* NRExpressionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C388AC16F8E288006306D1 /* NRExpressionsTests.m */; };
+		91C388B416F8E293006306D1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C388B216F8E293006306D1 /* main.m */; };
+		91C388B916F8E6D3006306D1 /* NRExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C388A016F8E278006306D1 /* NRExpression.m */; };
+		91C388BC16F8E96D006306D1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 91C388BB16F8E96D006306D1 /* README.md */; };
+		91FBC77214880F980075E6F5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FBC77114880F980075E6F5 /* Cocoa.framework */; };
+		91FBC79014880F980075E6F5 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FBC78F14880F980075E6F5 /* SenTestingKit.framework */; };
+		91FBC79114880F980075E6F5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FBC77114880F980075E6F5 /* Cocoa.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		91FBC79214880F980075E6F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 91FBC76414880F980075E6F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 91FBC76C14880F980075E6F5;
+			remoteInfo = ExpEvaluation;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		911D4C4F149A650100C917D6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		911D4C51149A650100C917D6 /* NREval */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NREval; sourceTree = BUILT_PRODUCTS_DIR; };
+		911D4C53149A650100C917D6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		91C3887816F8E220006306D1 /* NRXError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRXError.h; sourceTree = "<group>"; };
+		91C3887916F8E220006306D1 /* NRXError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NRXError.m; sourceTree = "<group>"; };
+		91C3887A16F8E220006306D1 /* NRXExpressionNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRXExpressionNode.h; sourceTree = "<group>"; };
+		91C3887B16F8E220006306D1 /* NRXExpressionNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NRXExpressionNode.m; sourceTree = "<group>"; };
+		91C3887C16F8E220006306D1 /* NRXInterpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRXInterpreter.h; sourceTree = "<group>"; };
+		91C3887D16F8E220006306D1 /* NRXInterpreter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NRXInterpreter.m; sourceTree = "<group>"; };
+		91C3887E16F8E220006306D1 /* NRXLexer.lm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; path = NRXLexer.lm; sourceTree = "<group>"; };
+		91C3887F16F8E220006306D1 /* NRXParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRXParser.h; sourceTree = "<group>"; };
+		91C3888016F8E220006306D1 /* NRXParser.ym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = NRXParser.ym; sourceTree = "<group>"; };
+		91C3888116F8E220006306D1 /* NRXStatementNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRXStatementNode.h; sourceTree = "<group>"; };
+		91C3888216F8E220006306D1 /* NRXStatementNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NRXStatementNode.m; sourceTree = "<group>"; };
+		91C3888316F8E220006306D1 /* NRXTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRXTypes.h; sourceTree = "<group>"; };
+		91C3888416F8E220006306D1 /* NRXTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NRXTypes.m; sourceTree = "<group>"; };
+		91C3889B16F8E278006306D1 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		91C3889C16F8E278006306D1 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		91C3889D16F8E278006306D1 /* NRAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRAppDelegate.h; sourceTree = "<group>"; };
+		91C3889E16F8E278006306D1 /* NRAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NRAppDelegate.m; sourceTree = "<group>"; };
+		91C3889F16F8E278006306D1 /* NRExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRExpression.h; sourceTree = "<group>"; };
+		91C388A016F8E278006306D1 /* NRExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NRExpression.m; sourceTree = "<group>"; };
+		91C388A816F8E288006306D1 /* mandelprot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mandelprot.c; sourceTree = "<group>"; };
+		91C388A916F8E288006306D1 /* mandelprot.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = mandelprot.py; sourceTree = "<group>"; };
+		91C388AB16F8E288006306D1 /* NRExpressionsTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRExpressionsTests.h; sourceTree = "<group>"; };
+		91C388AC16F8E288006306D1 /* NRExpressionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NRExpressionsTests.m; sourceTree = "<group>"; };
+		91C388B216F8E293006306D1 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		91C388B316F8E293006306D1 /* mandelbrot.nrx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mandelbrot.nrx; sourceTree = "<group>"; };
+		91C388B616F8E2F4006306D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		91C388B816F8E3DD006306D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		91C388BA16F8E813006306D1 /* NRExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NRExpressions.h; sourceTree = "<group>"; };
+		91C388BB16F8E96D006306D1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		91FBC76D14880F980075E6F5 /* SimpleEvaluation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleEvaluation.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		91FBC77114880F980075E6F5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		91FBC77414880F980075E6F5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		91FBC78E14880F980075E6F5 /* NRExpressionsTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NRExpressionsTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		91FBC78F14880F980075E6F5 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		911D4C4E149A650100C917D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				911D4C54149A650100C917D6 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91FBC76A14880F980075E6F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91FBC77214880F980075E6F5 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91FBC78A14880F980075E6F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91FBC79014880F980075E6F5 /* SenTestingKit.framework in Frameworks */,
+				91FBC79114880F980075E6F5 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		91C3887716F8E220006306D1 /* NRExpressions */ = {
+			isa = PBXGroup;
+			children = (
+				91C388BA16F8E813006306D1 /* NRExpressions.h */,
+				91C3887F16F8E220006306D1 /* NRXParser.h */,
+				91C3887E16F8E220006306D1 /* NRXLexer.lm */,
+				91C3888016F8E220006306D1 /* NRXParser.ym */,
+				91C3887816F8E220006306D1 /* NRXError.h */,
+				91C3887916F8E220006306D1 /* NRXError.m */,
+				91C3887A16F8E220006306D1 /* NRXExpressionNode.h */,
+				91C3887B16F8E220006306D1 /* NRXExpressionNode.m */,
+				91C3887C16F8E220006306D1 /* NRXInterpreter.h */,
+				91C3887D16F8E220006306D1 /* NRXInterpreter.m */,
+				91C3888116F8E220006306D1 /* NRXStatementNode.h */,
+				91C3888216F8E220006306D1 /* NRXStatementNode.m */,
+				91C3888316F8E220006306D1 /* NRXTypes.h */,
+				91C3888416F8E220006306D1 /* NRXTypes.m */,
+			);
+			path = NRExpressions;
+			sourceTree = "<group>";
+		};
+		91C3889A16F8E278006306D1 /* SimpleEvaluation */ = {
+			isa = PBXGroup;
+			children = (
+				91C388B616F8E2F4006306D1 /* Info.plist */,
+				91C3889B16F8E278006306D1 /* main.m */,
+				91C3889C16F8E278006306D1 /* MainMenu.xib */,
+				91C3889D16F8E278006306D1 /* NRAppDelegate.h */,
+				91C3889E16F8E278006306D1 /* NRAppDelegate.m */,
+				91C3889F16F8E278006306D1 /* NRExpression.h */,
+				91C388A016F8E278006306D1 /* NRExpression.m */,
+			);
+			path = SimpleEvaluation;
+			sourceTree = "<group>";
+		};
+		91C388A716F8E288006306D1 /* NRExpressionsTests */ = {
+			isa = PBXGroup;
+			children = (
+				91C388B816F8E3DD006306D1 /* Info.plist */,
+				91C388A816F8E288006306D1 /* mandelprot.c */,
+				91C388A916F8E288006306D1 /* mandelprot.py */,
+				91C388AB16F8E288006306D1 /* NRExpressionsTests.h */,
+				91C388AC16F8E288006306D1 /* NRExpressionsTests.m */,
+			);
+			path = NRExpressionsTests;
+			sourceTree = "<group>";
+		};
+		91C388B116F8E293006306D1 /* NREval */ = {
+			isa = PBXGroup;
+			children = (
+				91C388B216F8E293006306D1 /* main.m */,
+				91C388B316F8E293006306D1 /* mandelbrot.nrx */,
+			);
+			path = NREval;
+			sourceTree = "<group>";
+		};
+		91FBC76214880F980075E6F5 = {
+			isa = PBXGroup;
+			children = (
+				91C388BB16F8E96D006306D1 /* README.md */,
+				91C3887716F8E220006306D1 /* NRExpressions */,
+				91C3889A16F8E278006306D1 /* SimpleEvaluation */,
+				91C388B116F8E293006306D1 /* NREval */,
+				91C388A716F8E288006306D1 /* NRExpressionsTests */,
+				91FBC77014880F980075E6F5 /* Frameworks */,
+				91FBC76E14880F980075E6F5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		91FBC76E14880F980075E6F5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				91FBC76D14880F980075E6F5 /* SimpleEvaluation.app */,
+				91FBC78E14880F980075E6F5 /* NRExpressionsTests.octest */,
+				911D4C51149A650100C917D6 /* NREval */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		91FBC77014880F980075E6F5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				91FBC77114880F980075E6F5 /* Cocoa.framework */,
+				91FBC77414880F980075E6F5 /* AppKit.framework */,
+				91FBC78F14880F980075E6F5 /* SenTestingKit.framework */,
+				911D4C53149A650100C917D6 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		911D4C50149A650100C917D6 /* NREval */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 911D4C5E149A650100C917D6 /* Build configuration list for PBXNativeTarget "NREval" */;
+			buildPhases = (
+				911D4C4D149A650100C917D6 /* Sources */,
+				911D4C4E149A650100C917D6 /* Frameworks */,
+				911D4C4F149A650100C917D6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NREval;
+			productName = ExpEval;
+			productReference = 911D4C51149A650100C917D6 /* NREval */;
+			productType = "com.apple.product-type.tool";
+		};
+		91FBC76C14880F980075E6F5 /* SimpleEvaluation */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91FBC79F14880F980075E6F5 /* Build configuration list for PBXNativeTarget "SimpleEvaluation" */;
+			buildPhases = (
+				91FBC76914880F980075E6F5 /* Sources */,
+				91FBC76A14880F980075E6F5 /* Frameworks */,
+				91FBC76B14880F980075E6F5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SimpleEvaluation;
+			productName = ExpEvaluation;
+			productReference = 91FBC76D14880F980075E6F5 /* SimpleEvaluation.app */;
+			productType = "com.apple.product-type.application";
+		};
+		91FBC78D14880F980075E6F5 /* NRExpressionsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91FBC7A214880F980075E6F5 /* Build configuration list for PBXNativeTarget "NRExpressionsTests" */;
+			buildPhases = (
+				91FBC78914880F980075E6F5 /* Sources */,
+				91FBC78A14880F980075E6F5 /* Frameworks */,
+				91FBC78B14880F980075E6F5 /* Resources */,
+				91FBC78C14880F980075E6F5 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				91FBC79314880F980075E6F5 /* PBXTargetDependency */,
+			);
+			name = NRExpressionsTests;
+			productName = ExpEvaluationTests;
+			productReference = 91FBC78E14880F980075E6F5 /* NRExpressionsTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		91FBC76414880F980075E6F5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Savoy Software";
+			};
+			buildConfigurationList = 91FBC76714880F980075E6F5 /* Build configuration list for PBXProject "NRExpressions" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 91FBC76214880F980075E6F5;
+			productRefGroup = 91FBC76E14880F980075E6F5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				91FBC76C14880F980075E6F5 /* SimpleEvaluation */,
+				91FBC78D14880F980075E6F5 /* NRExpressionsTests */,
+				911D4C50149A650100C917D6 /* NREval */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		91FBC76B14880F980075E6F5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91C388A316F8E278006306D1 /* MainMenu.xib in Resources */,
+				91C388BC16F8E96D006306D1 /* README.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91FBC78B14880F980075E6F5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91C388AE16F8E288006306D1 /* mandelprot.py in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		91FBC78C14880F980075E6F5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		911D4C4D149A650100C917D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91C3888716F8E220006306D1 /* NRXError.m in Sources */,
+				91C3888A16F8E220006306D1 /* NRXExpressionNode.m in Sources */,
+				91C3888D16F8E220006306D1 /* NRXInterpreter.m in Sources */,
+				91C3889016F8E220006306D1 /* NRXLexer.lm in Sources */,
+				91C3889316F8E220006306D1 /* NRXParser.ym in Sources */,
+				91C3889616F8E220006306D1 /* NRXStatementNode.m in Sources */,
+				91C3889916F8E220006306D1 /* NRXTypes.m in Sources */,
+				91C388B416F8E293006306D1 /* main.m in Sources */,
+				91C388B916F8E6D3006306D1 /* NRExpression.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91FBC76914880F980075E6F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91C3888516F8E220006306D1 /* NRXError.m in Sources */,
+				91C3888816F8E220006306D1 /* NRXExpressionNode.m in Sources */,
+				91C3888B16F8E220006306D1 /* NRXInterpreter.m in Sources */,
+				91C3888E16F8E220006306D1 /* NRXLexer.lm in Sources */,
+				91C3889116F8E220006306D1 /* NRXParser.ym in Sources */,
+				91C3889416F8E220006306D1 /* NRXStatementNode.m in Sources */,
+				91C3889716F8E220006306D1 /* NRXTypes.m in Sources */,
+				91C388A216F8E278006306D1 /* main.m in Sources */,
+				91C388A416F8E278006306D1 /* NRAppDelegate.m in Sources */,
+				91C388A516F8E278006306D1 /* NRExpression.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91FBC78914880F980075E6F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91C388B016F8E288006306D1 /* NRExpressionsTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		91FBC79314880F980075E6F5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 91FBC76C14880F980075E6F5 /* SimpleEvaluation */;
+			targetProxy = 91FBC79214880F980075E6F5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		911D4C5C149A650100C917D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		911D4C5D149A650100C917D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		91FBC79D14880F980075E6F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		91FBC79E14880F980075E6F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		91FBC7A014880F980075E6F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SimpleEvaluation/Info.plist;
+				PRODUCT_NAME = SimpleEvaluation;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		91FBC7A114880F980075E6F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SimpleEvaluation/Info.plist;
+				PRODUCT_NAME = SimpleEvaluation;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		91FBC7A314880F980075E6F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SimpleEvaluation.app/Contents/MacOS/SimpleEvaluation";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				INFOPLIST_FILE = NRExpressionsTests/Info.plist;
+				PRODUCT_NAME = NRExpressionsTests;
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		91FBC7A414880F980075E6F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SimpleEvaluation.app/Contents/MacOS/SimpleEvaluation";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				INFOPLIST_FILE = NRExpressionsTests/Info.plist;
+				PRODUCT_NAME = NRExpressionsTests;
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		911D4C5E149A650100C917D6 /* Build configuration list for PBXNativeTarget "NREval" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				911D4C5C149A650100C917D6 /* Debug */,
+				911D4C5D149A650100C917D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		91FBC76714880F980075E6F5 /* Build configuration list for PBXProject "NRExpressions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91FBC79D14880F980075E6F5 /* Debug */,
+				91FBC79E14880F980075E6F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		91FBC79F14880F980075E6F5 /* Build configuration list for PBXNativeTarget "SimpleEvaluation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91FBC7A014880F980075E6F5 /* Debug */,
+				91FBC7A114880F980075E6F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		91FBC7A214880F980075E6F5 /* Build configuration list for PBXNativeTarget "NRExpressionsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91FBC7A314880F980075E6F5 /* Debug */,
+				91FBC7A414880F980075E6F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 91FBC76414880F980075E6F5 /* Project object */;
+}

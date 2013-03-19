@@ -1,0 +1,204 @@
+%error-verbose
+%locations
+%pure-parser
+%lex-param {void * scanner}
+%parse-param {NRXParser *parser}
+%name-prefix="NRX_"
+%debug
+%no-lines
+%verbose
+
+%{
+#import <Foundation/Foundation.h>
+
+#import "NRXExpressionNode.h"
+#import "NRXStatementNode.h"
+#import "NRXParser.h"
+
+#define scanner parser->scanner
+
+static inline id pop(void *object) { return (__bridge_transfer id)(object); }
+static inline void *push(id object)
+{
+#ifdef DEBUG_PARSER
+	NSLog(@"reducing %@", NSStringFromClass([object class]));
+#endif
+	return (__bridge_retained void *)(object);
+}
+
+// TODO: remove useless union
+// TODO: check for-in style loop for need for parenthesis
+// TODO: add break and continue
+// TODO: add exception handling, try catch
+// TODO: add string operations, substr, find, replace
+// TODO: add regular expression operations
+// TODO: add real types
+// TODO: build solid Objective-C bridge
+// TODO: error handling with source location context (both for parsing and runtime)
+// TODO: add assert keyword
+// TODO: check function definition scopes (always global?)
+// TODO: dictionaries
+// TODO: check ARC and non-ARC memory handling
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconversion"
+
+%}
+
+%union {
+    void *node;
+};
+
+%token <node> NULLTOKEN
+%token <node> BOOLTOKEN
+%token <node> INTEGER
+%token <node> FLOAT
+%token <node> SYMBOL
+%token <node> STRING
+%token <node> ASSIGNMENT
+%token <node> ID_LOOKUP
+%token WHILE FOR IN IF PRINT RETURN ASSERT TRY CATCH BREAK CONTINUE ERROR
+%nonassoc IFX
+%nonassoc ELSE
+
+%left '?' ':'
+%left OR
+%left AND
+%left GE LE EQ NE '>' '<'
+%left '+' '-'
+%left '*' '/' '%'
+%right '!'
+%nonassoc UMINUS
+%nonassoc UNOT
+%left '.' '[' '('
+
+%type <node> statement statements block expr exprlist literal functionprep
+
+%%
+
+program:
+    statements                               { assert(parser->result == nil); parser->result = push([[NRXBlockNode alloc] initWithStatements:pop($1)]); }
+  ;
+
+statements:
+    /* empty */                              { $$ = push([[NSMutableArray alloc] init]); }
+  | statements statement                     { $$ = $1; [(__bridge NSMutableArray *)$1 addObject:pop($2)]; }
+  ;
+
+block:
+    '{' statements '}'                       { $$ = push([[NRXBlockNode alloc] initWithStatements:pop($2)]); }
+  ;
+
+statement:
+    ';'                                      { $$ = push([[NRXNoOperationNode alloc] init]); }
+  | block                                    { $$ = $1; }
+  | PRINT ';'                                { $$ = push([[NRXPrintNode alloc] initWithExpression:[[NRXStringLiteralNode alloc] initWithValue:[NSString string]]]); }
+  | PRINT expr ';'                           { $$ = push([[NRXPrintNode alloc] initWithExpression:pop($2)]); }
+  | ASSERT expr ';'                          { $$ = push([[NRXAssertNode alloc] initWithExpression:pop($2)]); }
+  | CONTINUE ';'                             { $$ = push([[NRXContinueNode alloc] init]); }
+  | BREAK ';'                                { $$ = push([[NRXBreakNode alloc] init]); }
+  | ERROR expr ';'                           { $$ = push([[NRXErrorNode alloc] initWithExpression:pop($2)]); }
+  | RETURN ';'                               { $$ = push([[NRXReturnNode alloc] initWithExpression:nil]); }
+  | RETURN expr ';'                          { $$ = push([[NRXReturnNode alloc] initWithExpression:pop($2)]); }
+  | SYMBOL ASSIGNMENT expr ';'               { $$ = push([[NRXAssignmentNode alloc] initWithVariableName:pop($1) expression:pop($3)]); }
+  | expr '.' SYMBOL ASSIGNMENT expr ';'      { $$ = push([[NRXPropertyAssignmentNode alloc] initWithObject:pop($1) propertyName:pop($3) expression:pop($5)]); }
+  | WHILE '(' expr ')' statement             { $$ = push([[NRXWhileNode alloc] initWithCondition:pop($3) statement:pop($5)]); }
+  | FOR '(' SYMBOL IN expr ')' statement     { $$ = push([[NRXForInNode alloc] initWithVariable:pop($3) list:pop($5) statement:pop($7)]); }
+  | IF '(' expr ')' statement %prec IFX      { $$ = push([[NRXIfElseNode alloc] initWithCondition:pop($3) statement:pop($5) elseStatement:nil]); }
+  | IF '(' expr ')' statement ELSE statement { $$ = push([[NRXIfElseNode alloc] initWithCondition:pop($3) statement:pop($5) elseStatement:pop($7)]); }
+  | TRY block CATCH '(' SYMBOL ')' block     { $$ = push([[NRXTryCatchNode alloc] initWithTryStatement:pop($2) symbol:pop($5) catchStatement:pop($7)]); }
+  | functionprep ';'                         {
+                                               NSArray *fprep = pop($1);
+                                               assert([fprep count] == 2);
+                                               $$ = push([[NRXCallNode alloc] initWithCallable:fprep[0] arguments:fprep[1]]);
+                                             }
+  | functionprep block                       {
+                                               NSArray *fprep = pop($1);
+                                               assert([fprep count] == 2);
+                                               NRXSymbolNode *symbol  = fprep[0];
+                                               if (! [symbol isKindOfClass:[NRXSymbolNode class]])
+                                               {
+                                                   yyerror(&yylloc, parser, "syntax error: function definition: not a symbol"); \
+                                                   YYERROR;
+                                               }
+                                               NSArray *varlist = fprep[1];
+                                               assert([varlist isKindOfClass:[NSArray class]]);
+                                               for (NRXExpressionNode *node in varlist)
+                                               {
+                                                  if (! [node isKindOfClass:[NRXSymbolNode class]])
+                                                  {
+                                                      yyerror(&yylloc, parser, "syntax error: function definition: bad variable list"); \
+                                                      YYERROR;
+                                                  }
+                                               }
+                                               $$ = push([[NRXFunctionDefinitionNode alloc] initWithName:symbol.name parameterList:varlist body:pop($2)]);
+                                             }
+  ;
+
+functionprep:
+    expr '(' exprlist ')'                    { $$ = push([[NSArray alloc] initWithObjects:pop($1), pop($3), nil]); }
+  ;
+
+expr:
+    literal                                  { $$ = $1; }
+  | SYMBOL                                   { $$ = push([[NRXSymbolNode alloc] initWithName:pop($1)]); }
+  | ID_LOOKUP                                { $$ = push([[NRXLookupNode alloc] initWithToken:pop($1)]); }
+  | '-' expr %prec UMINUS                    { $$ = push([[NRXNegationNode alloc] initWithArgument:pop($2)]); }
+  | '!' expr %prec UNOT                      { $$ = push([[NRXLogicalNegationNode alloc] initWithArgument:pop($2)]); }
+  | expr '?' expr ':' expr                   { $$ = push([[NRXTernaryConditionNode alloc] initWithCondition:pop($1) positiveExpression:pop($3) negativeExpression:pop($5)]); }
+  | expr '+' expr                            { $$ = push([[NRXAdditionNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr '-' expr                            { $$ = push([[NRXSubtractionNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr '*' expr                            { $$ = push([[NRXMultiplicationNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr '/' expr                            { $$ = push([[NRXDivisionNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr '%' expr                            { $$ = push([[NRXModulusNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr '<' expr                            { $$ = push([[NRXLessThanNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr '>' expr                            { $$ = push([[NRXGreaterThanNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr AND expr                            { $$ = push([[NRXLogicalAndNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr OR expr                             { $$ = push([[NRXLogicalOrNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr GE expr                             { $$ = push([[NRXGreaterOrEqualNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr LE expr                             { $$ = push([[NRXLessOrEqualNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr NE expr                             { $$ = push([[NRXNotEqualNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr EQ expr                             { $$ = push([[NRXEqualNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr '(' exprlist ')'                    { $$ = push([[NRXCallNode alloc] initWithCallable:pop($1) arguments:pop($3)]); }
+  | expr '.' SYMBOL                          { $$ = push([[NRXPropertyAccessNode alloc] initWithObject:pop($1) propertyName:pop($3)]); }
+  | expr '[' expr ']'                        { $$ = push([[NRXSubscriptNode alloc] initWithListExpression:pop($1) index:pop($3)]); }
+  | '(' expr ')'                             { $$ = $2; }
+  ;
+
+literal:
+    INTEGER                                  { $$ = push([[NRXNumberLiteralNode alloc] initWithValue:pop($1)]); }
+  | FLOAT                                    { $$ = push([[NRXNumberLiteralNode alloc] initWithValue:pop($1)]); }
+  | BOOLTOKEN                                { $$ = push([[NRXNumberLiteralNode alloc] initWithValue:pop($1)]); }
+  | STRING                                   { $$ = push([[NRXStringLiteralNode alloc] initWithValue:pop($1)]); }
+  | NULLTOKEN                                { $$ = push([[NRXNullLiteralNode   alloc] initWithValue:pop($1)]); }
+  | '[' exprlist ']'                         { $$ = push([[NRXListLiteralNode   alloc] initWithValue:pop($2)]); }
+  ;
+
+exprlist:
+    /* empty */                              { $$ = push([[NSMutableArray alloc] init]); }
+  | expr                                     { $$ = push([[NSMutableArray alloc] initWithObjects:pop($1), nil]); }
+  | exprlist ',' expr                        { $$ = $1; [(__bridge NSMutableArray *)$1 addObject:pop($3)]; }
+  ;
+
+%%
+
+NRXBlockNode *NRXParserParseString(NSString *sourceString, NRXParserErrorBlock errorBlock)
+{
+	NRXParser parser = {
+		.sourceString = [sourceString UTF8String],
+		.error = NO,
+		.errorBlock = errorBlock,
+		.result = NULL,
+	};
+
+	NRXParserInit(& parser);
+	NRX_parse(& parser);
+	NRXParserCleanup(& parser);
+
+	NRXBlockNode *result = (__bridge_transfer NRXBlockNode *)(parser.result);
+	if (parser.error)
+		result = nil;
+	return result;
+}
+
+#pragma clang diagnostic pop

@@ -1,0 +1,163 @@
+%option reentrant
+%option bison-bridge
+%option bison-locations
+%option noyywrap
+%option prefix="NRX_"
+%option yylineno
+
+%{
+#import <Foundation/Foundation.h>
+#import "NRXParser.h"
+#import "xlocale.h"
+
+#define YY_EXTRA_TYPE  NRXParser*
+//#define YY_USER_ACTION yylloc->first_line = yylineno;
+
+// Don't know why these prototypes are missing...
+int NRX_get_column(void *scanner);
+void NRX_set_column(int column_no , void *scanner);
+
+static void *parseNumber(const char* str)
+{
+	return (__bridge_retained void *)[NSNumber numberWithDouble:atof_l(str, NULL)];
+}
+
+static void *parseSymbol(const char* str)
+{
+	return (__bridge_retained void *)[NSString stringWithUTF8String:str];
+}
+
+#ifdef DEBUG_LEXER
+#define RETURN_TOKEN(token) \
+	{ \
+		NSString *tokenString = nil; \
+		if (token <= 127) \
+			tokenString = [NSString stringWithFormat:@"%c", token]; \
+		else if (token == SYMBOL) \
+			tokenString = @"SYMBOL"; \
+		else if (token == STRING) \
+			tokenString = @"STRING"; \
+		else \
+			tokenString = [NSString stringWithFormat:@"%d", token]; \
+		NSLog(@"token '%s': %@", yytext, tokenString); \
+	} \
+	return token
+#else
+	#define RETURN_TOKEN(token) \
+		return token
+#endif
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconversion"
+#pragma clang diagnostic ignored "-Wunused-function"
+
+%}
+
+%x DOUBLE_QUOTED_STRING SINGLE_QUOTED_STRING
+%x INCOMMENT
+
+%%
+
+"&&"            RETURN_TOKEN(AND);
+"||"            RETURN_TOKEN(OR);
+">="            RETURN_TOKEN(GE);
+"<="            RETURN_TOKEN(LE);
+"=="            RETURN_TOKEN(EQ);
+"!="            RETURN_TOKEN(NE);
+":="            RETURN_TOKEN(ASSIGNMENT);
+"while"         RETURN_TOKEN(WHILE);
+"for"           RETURN_TOKEN(FOR);
+"in"            RETURN_TOKEN(IN);
+"if"            RETURN_TOKEN(IF);
+"else"          RETURN_TOKEN(ELSE);
+"print"         RETURN_TOKEN(PRINT);
+"true"          { yylval->node = (__bridge_retained void *)[NSNumber numberWithBool:YES]; RETURN_TOKEN(BOOLTOKEN); }
+"false"         { yylval->node = (__bridge_retained void *)[NSNumber numberWithBool:NO];  RETURN_TOKEN(BOOLTOKEN); }
+"NULL"          { yylval->node = (__bridge_retained void *)[NSNull null]; RETURN_TOKEN(NULLTOKEN); }
+"try"           RETURN_TOKEN(TRY);
+"catch"         RETURN_TOKEN(CATCH);
+"assert"        RETURN_TOKEN(ASSERT);
+"break"         RETURN_TOKEN(BREAK);
+"continue"      RETURN_TOKEN(CONTINUE);
+"error"         RETURN_TOKEN(ERROR);
+"return"        RETURN_TOKEN(RETURN);
+
+[$#][_a-zA-Z][_a-zA-Z0-9]* {
+                yylval->node = parseSymbol(yytext);
+                RETURN_TOKEN(ID_LOOKUP);
+            }
+
+[-()<>=+*/;{}!?:.] {
+				RETURN_TOKEN(*yytext);
+            }
+
+0           {
+                yylval->node = parseNumber(yytext);
+                RETURN_TOKEN(INTEGER);
+            }
+
+[1-9][0-9]* {
+                yylval->node = parseNumber(yytext);
+                RETURN_TOKEN(INTEGER);
+            }
+
+[1-9][0-9]*\.[0-9]* {
+				yylval->node = parseNumber(yytext);
+                RETURN_TOKEN(FLOAT);
+            }
+
+0?\.[0-9]*    {
+                yylval->node = parseNumber(yytext);
+                RETURN_TOKEN(FLOAT);
+            }
+
+
+[_a-zA-Z][_a-zA-Z0-9]* { 
+                yylval->node = parseSymbol(yytext);
+                RETURN_TOKEN(SYMBOL);
+            }
+
+\"                         { BEGIN DOUBLE_QUOTED_STRING; yylval->node = (__bridge_retained void *)[ [NSMutableString alloc] init]; }
+<DOUBLE_QUOTED_STRING>\\n  { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\n"]; }
+<DOUBLE_QUOTED_STRING>\\t  { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\t"]; }
+<DOUBLE_QUOTED_STRING>\\\" { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\""]; }
+<DOUBLE_QUOTED_STRING>\\\\ { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\\"]; }
+<DOUBLE_QUOTED_STRING>\"   { BEGIN 0; RETURN_TOKEN(STRING); }
+<DOUBLE_QUOTED_STRING>\n   { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\n"]; }
+<DOUBLE_QUOTED_STRING>.    { [((__bridge NSMutableString *)(yylval->node)) appendFormat:@"%c", *yytext]; }
+
+'                          { BEGIN SINGLE_QUOTED_STRING; yylval->node = (__bridge_retained void *)[ [NSMutableString alloc] init]; }
+<SINGLE_QUOTED_STRING>\\n  { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\n"]; }
+<SINGLE_QUOTED_STRING>\\t  { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\t"]; }
+<SINGLE_QUOTED_STRING>\\'  { [((__bridge NSMutableString *)(yylval->node)) appendString:@"'"]; }
+<SINGLE_QUOTED_STRING>\\\\ { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\\"]; }
+<SINGLE_QUOTED_STRING>'    { BEGIN 0; RETURN_TOKEN(STRING); }
+<SINGLE_QUOTED_STRING>\n   { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\n"]; }
+<SINGLE_QUOTED_STRING>.    { [((__bridge NSMutableString *)(yylval->node)) appendFormat:@"%c", *yytext]; }
+
+\/\*            { BEGIN INCOMMENT; }
+<INCOMMENT>\*\/ { BEGIN 0; }
+<INCOMMENT>.    ;
+<INCOMMENT>\n   ;
+
+\/\/.*          ; // ignore c++ style comments
+
+[ \t\n\r]+      ; /* ignore whitespace */
+
+.               { RETURN_TOKEN(*yytext); }
+
+%%
+
+void NRXParserInit(NRXParser *parser)
+{
+	NRX_lex_init_extra(parser, &(parser->scanner));
+	parser->buffer = yy_scan_string(parser->sourceString, parser->scanner);
+}
+
+void NRXParserCleanup(NRXParser *parser)
+{
+	yy_delete_buffer(parser->buffer, parser->scanner);
+	NRX_lex_destroy(parser->scanner);
+}
+
+#pragma clang diagnostic pop
