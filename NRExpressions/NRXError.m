@@ -51,4 +51,5 @@
 @implementation NRXArgumentError    @end
 @implementation NRXTypeError        @end
 @implementation NRXAssertionError   @end
+@implementation NRXConversionError  @end
 @implementation NRXCustomError      @end

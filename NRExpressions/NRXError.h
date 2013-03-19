@@ -30,3 +30,4 @@
 @interface NRXTypeError        : NRXRuntimeError @end
 @interface NRXAssertionError   : NRXRuntimeError @end
 @interface NRXCustomError      : NRXRuntimeError @end
+@interface NRXConversionError  : NRXRuntimeError @end
