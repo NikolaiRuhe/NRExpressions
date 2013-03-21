@@ -327,6 +327,68 @@
 
 
 
+@implementation NRXDelegateCallbackNode
+{
+	NSString *_name;
+	SEL _selector;
+}
+
+- (id)initWithName:(NSString *)name selector:(SEL)selector
+{
+	self = [self init];
+	if (self != nil)
+	{
+		_name     = [name copy];
+		_selector = selector;
+
+#ifdef DEBUG
+		const char *s = sel_getName(selector);
+		NSUInteger colonCount = 0;
+		while (*s != 0) {
+			if (*s++ == ':')
+				colonCount += 1;
+		}
+		NSAssert(colonCount == 2, @"bad selector in NRXDelegateCallbackNode");
+#endif
+	}
+	return self;
+}
+
++ (NSString *)nrx_typeString
+{
+	return @"Function";
+}
+
+- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+{
+	return self;
+}
+
+- (NRXValue *)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
+{
+	// create a function local scope
+	if (! [interpreter pushScope])
+		return [NRXInterpreterError errorWithFormat:@"call stack exceeded"];
+
+	// call delegate
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+	NRXValue *result = [interpreter.delegate performSelector:_selector withObject:_name withObject:arguments];
+#pragma clang diagnostic pop
+
+	// restore scope
+	[interpreter popScope];
+
+	if ([result isKindOfClass:[NRXReturnResult class]])
+		return ((NRXReturnResult *)result).value;
+
+	return result;
+}
+
+@end
+
+
+
 @implementation NRXIfElseNode
 
 @synthesize condition = _condition;

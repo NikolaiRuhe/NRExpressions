@@ -84,6 +84,12 @@ typedef NRXValue *(^NRXBlockFunctionBlock)(NSArray *arguments);
 
 
 
+@interface NRXDelegateCallbackNode : NRXExpressionNode <NRXCallable>
+- (id)initWithName:(NSString *)name selector:(SEL)selector;
+@end
+
+
+
 @interface NRXIfElseNode : NRXStatementNode
 @property (nonatomic, readonly, retain) NRXExpressionNode *condition;
 @property (nonatomic, readonly, retain) NRXStatementNode *statement;
