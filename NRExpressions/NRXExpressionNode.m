@@ -53,6 +53,8 @@
 	for (NRXExpressionNode *element in (NSArray *)(self.value))
 	{
 		EVALUATE_EXPRESSION(elementValue, element);
+		if (elementValue == nil)
+			elementValue = [NSNull null];
 		[resultArray addObject:elementValue];
 	}
 	
@@ -188,6 +190,8 @@
 	for (NRXExpressionNode *element in self.arguments)
 	{
 		EVALUATE_EXPRESSION(elementValue, element);
+		if (elementValue == nil)
+			elementValue = [NSNull null];
 		[arguments addObject:elementValue];
 	}
 
@@ -258,7 +262,6 @@
 {
 	EVALUATE_EXPRESSION(object, self.object);
 
-//
 	if ([object respondsToSelector:_selector])
 	{
 #pragma clang diagnostic push

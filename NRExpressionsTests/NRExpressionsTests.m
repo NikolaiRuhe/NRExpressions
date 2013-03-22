@@ -155,7 +155,7 @@
 	@"        while (h < 20) {\n"
 	@"            z := complex_add(complex_mult(z, z), c);\n"
 	@"            if (complex_abs(z) > 2)\n"
-	@"                return  (h % 2) ? \" \" : \"+\";\n"
+	@"                return  (h % 2) != 0 ? \" \" : \"+\";\n"
 	@"            h := h + 1;\n"
 	@"        }\n"
 	@"\n"

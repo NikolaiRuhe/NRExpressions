@@ -24,7 +24,7 @@ static void *parseNumber(const char* str)
 
 static void *parseSymbol(const char* str)
 {
-	return (__bridge_retained void *)[NSString stringWithUTF8String:str];
+	return (__bridge_retained void *)[[NSString alloc] initWithUTF8String:str];
 }
 
 #ifdef DEBUG_LEXER

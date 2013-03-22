@@ -20,7 +20,7 @@ mandel(c)
         while (h < 20) {
 			z := complex_add(complex_mult(z, z), c);
             if (complex_abs(z) > 2)
-                return  (h % 2) ? " " : "+";
+                return  (h % 2) != 0 ? " " : "+";
             h := h + 1;
 		}
 

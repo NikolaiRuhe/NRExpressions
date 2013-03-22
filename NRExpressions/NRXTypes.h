@@ -59,10 +59,10 @@ if (! [var isKindOfClass:expectedClass]) \
 	return [NRXTypeError errorWithFormat:@"type error: %@ expected, got %@", [expectedClass nrx_typeString], [var nrx_typeString]];
 
 #define EVALUATE_LIST_EXPRESSION(var, node) \
-NSMutableArray *var; \
+NSArray *var; \
 { \
-	EVALUATE_EXPRESSION_OF_TYPE(value, (node), [NSMutableArray class]); \
-	var = (NSMutableArray *)value; \
+	EVALUATE_EXPRESSION_OF_TYPE(value, (node), [NSArray class]); \
+	var = (NSArray *)value; \
 }
 
 #define EVALUATE_NUMBER_EXPRESSION(var, node) \
