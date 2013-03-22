@@ -15,8 +15,8 @@
 
 
 @interface NRXLiteralNode : NRXExpressionNode
-@property (nonatomic, readonly, copy) NRXValue *value;
-- (id)initWithValue:(NRXValue *)value;
+@property (nonatomic, readonly, copy) id <NRXValue> value;
+- (id)initWithValue:(id <NRXValue>)value;
 @end
 
 @interface NRXNumberLiteralNode : NRXLiteralNode @end

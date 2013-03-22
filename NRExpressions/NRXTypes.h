@@ -6,31 +6,72 @@
 //
 
 #import <Foundation/Foundation.h>
-@class NRXInterpreter;
+@class NRXInterpreter, NRXError;
 
 
 
-typedef NSObject NRXValue;
-
-
-// Add common value functionality to all NSObjects. This bridges to Objective-C objects.
 @interface NSObject (NRXValueAdditions)
 + (NSString *)nrx_typeString;
 - (NSString *)nrx_typeString;
-- (NRXValue *)nrx_valueForKey:(NSString *)key;
-- (NRXValue *)nrx_setValue:(NRXValue *)value forKey:(NSString *)key;
+@end
+
+// Common value functionality. This can be used to bridge to Objective-C objects.
+@protocol NRXValue <NSObject>
+@optional
+
++ (NSString *)nrx_typeString;
+- (NSString *)nrx_typeString;
+
+- (id <NRXValue>)nrx_negation;
+
+- (id <NRXValue>)nrx_addition:(id <NRXValue>)argument;
+- (id <NRXValue>)nrx_subtraction:(id <NRXValue>)argument;
+- (id <NRXValue>)nrx_multiplication:(id <NRXValue>)argument;
+- (id <NRXValue>)nrx_division:(id <NRXValue>)argument;
+- (id <NRXValue>)nrx_modulus:(id <NRXValue>)argument;
+
+- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error;
+
 @end
 
 
+@interface NSNull (NRXValueAdditions) <NRXValue>
+@end
 
-@interface NRXInterruptExecutionResult : NRXValue @end
+@interface NSArray (NRXValueAdditions) <NRXValue>
+- (NSDecimalNumber *)nrx_count;
+@end
+
+@interface NSString (NRXValueAdditions) <NRXValue>
+- (NSDecimalNumber *)nrx_len;
+@end
+
+@interface NSDecimalNumber (NRXValueAdditions) <NRXValue>
+- (id <NRXValue>)nrx_negation;
+- (id <NRXValue>)nrx_addition:(id <NRXValue>)argument;
+- (id <NRXValue>)nrx_subtraction:(id <NRXValue>)argument;
+- (id <NRXValue>)nrx_multiplication:(id <NRXValue>)argument;
+- (id <NRXValue>)nrx_division:(id <NRXValue>)argument;
+- (id <NRXValue>)nrx_modulus:(id <NRXValue>)argument;
+- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error;
+@end
+
+@interface NRXBoolean : NSObject <NRXValue>
++ (NRXBoolean *)yes;
++ (NRXBoolean *)no;
++ (NRXBoolean *)booleanWithBool:(BOOL)value;
+- (BOOL)boolValue;
+@end
+
+
+@interface NRXInterruptExecutionResult : NSObject <NRXValue> @end
 
 // NRXReturnResult is a special value class, that serves to identify function returns.
 // It is used to return from nested scopes to function level and to carry the return
 // statement's expression value.
 @interface NRXReturnResult : NRXInterruptExecutionResult
-@property (nonatomic, retain) NRXValue *value;
-- (id)initWithValue:(NRXValue *)value;
+@property (nonatomic, retain) id <NRXValue> value;
+- (id)initWithValue:(id <NRXValue>)value;
 @end
 
 @interface NRXBreakResult    : NRXInterruptExecutionResult @end
@@ -42,13 +83,13 @@ typedef NSObject NRXValue;
 // consists of objects conforming to NRXStatementNode or NRXExpressionNode.
 // AST nodes are immutable representations of code fragments.
 @interface NRXNode : NSObject
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter;
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter;
 @end
 
 
 
 #define EVALUATE_EXPRESSION(var, node) \
-NRXValue *var = [(node) evaluate:interpreter]; \
+id <NRXValue> var = [(node) evaluate:interpreter]; \
 assert(! [var isKindOfClass:[NRXReturnResult class]]); \
 if ([var isKindOfClass:[NRXInterruptExecutionResult class]]) \
 	return var;
@@ -65,32 +106,18 @@ NSArray *var; \
 	var = (NSArray *)value; \
 }
 
-#define EVALUATE_NUMBER_EXPRESSION(var, node) \
-NSNumber *var; \
-{ \
-	EVALUATE_EXPRESSION_OF_TYPE(value, (node), [NSNumber class]); \
-	var = (NSNumber *)value; \
-}
-
 #define EVALUATE_BOOL_EXPRESSION(var, node) \
 BOOL var; \
 { \
 	EVALUATE_EXPRESSION(value, (node)) \
-	if (! [value respondsToSelector:@selector(boolValue)]) \
+	if (! [value isKindOfClass:[NRXBoolean class]]) \
 		return [NRXTypeError errorWithFormat:@"type error: boolean expression expected, got %@", [value nrx_typeString]]; \
 	var = [(id)value boolValue]; \
 }
 
-#define EVALUATE_DOUBLE_EXPRESSION(var, node) \
-double var; \
-{ \
-	EVALUATE_EXPRESSION_OF_TYPE(value, (node), [NSNumber class]); \
-	var = [(NSNumber *)value doubleValue]; \
-}
-
 #define EVALUATE_STATEMENT(node) \
 { \
-	NRXValue *evaluated_value = [(node) evaluate:interpreter]; \
+	id <NRXValue> evaluated_value = [(node) evaluate:interpreter]; \
 	if ([evaluated_value isKindOfClass:[NRXInterruptExecutionResult class]]) \
 		return evaluated_value; \
 }

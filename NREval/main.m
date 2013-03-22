@@ -30,7 +30,7 @@ int main (int argc, const char * argv[])
 		if (! success)
 			return 1;
 
-		expression.printBlock = ^(NSObject *output) {
+		expression.printBlock = ^(id <NRXValue> output) {
 			fprintf(stdout, "%s\n", [[output description] UTF8String]);
 		};
 

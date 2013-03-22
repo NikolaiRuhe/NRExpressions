@@ -36,7 +36,7 @@
 	return self.rootNode != nil;
 }
 
-- (NRXValue *)evaluate
+- (id <NRXValue>)evaluate
 {
 	NRXInterpreter *interpreter = [[NRXInterpreter alloc] init];
 	interpreter.printBlock = self.printBlock;

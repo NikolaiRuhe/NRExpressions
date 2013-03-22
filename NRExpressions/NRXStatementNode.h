@@ -17,7 +17,7 @@
 
 
 @protocol NRXCallable
-- (NRXValue *)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter;
+- (id <NRXValue>)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter;
 @end
 
 
@@ -66,7 +66,7 @@
 
 
 
-@interface NRXFunctionDefinitionNode : NRXExpressionNode <NRXCallable>
+@interface NRXFunctionDefinitionNode : NRXExpressionNode <NRXCallable, NRXValue>
 @property (nonatomic, readonly, copy) NSString *name;
 @property (nonatomic, readonly, retain) NSArray *parameterList;
 @property (nonatomic, readonly, retain) NRXBlockNode *body;
@@ -75,7 +75,7 @@
 
 
 
-typedef NRXValue *(^NRXBlockFunctionBlock)(NSArray *arguments);
+typedef id <NRXValue>(^NRXBlockFunctionBlock)(NSArray *arguments);
 
 @interface NRXBlockFunctionNode : NRXFunctionDefinitionNode
 @property (nonatomic, readonly, copy) NRXBlockFunctionBlock block;
@@ -84,7 +84,7 @@ typedef NRXValue *(^NRXBlockFunctionBlock)(NSArray *arguments);
 
 
 
-@interface NRXDelegateCallbackNode : NRXExpressionNode <NRXCallable>
+@interface NRXDelegateCallbackNode : NRXExpressionNode <NRXCallable, NRXValue>
 - (id)initWithName:(NSString *)name selector:(SEL)selector;
 @end
 

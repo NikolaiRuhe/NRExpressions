@@ -8,6 +8,7 @@
 %{
 #import <Foundation/Foundation.h>
 #import "NRXParser.h"
+#import "NRXTypes.h"
 #import "xlocale.h"
 
 #define YY_EXTRA_TYPE  NRXParser*
@@ -19,7 +20,8 @@ void NRX_set_column(int column_no , void *scanner);
 
 static void *parseNumber(const char* str)
 {
-	return (__bridge_retained void *)[NSNumber numberWithDouble:atof_l(str, NULL)];
+	NSString *string = [[NSString alloc] initWithUTF8String:str];
+	return (__bridge_retained void *)[[NSDecimalNumber alloc] initWithString:string];
 }
 
 static void *parseSymbol(const char* str)
@@ -71,8 +73,8 @@ static void *parseSymbol(const char* str)
 "if"            RETURN_TOKEN(IF);
 "else"          RETURN_TOKEN(ELSE);
 "print"         RETURN_TOKEN(PRINT);
-"true"          { yylval->node = (__bridge_retained void *)[NSNumber numberWithBool:YES]; RETURN_TOKEN(BOOLTOKEN); }
-"false"         { yylval->node = (__bridge_retained void *)[NSNumber numberWithBool:NO];  RETURN_TOKEN(BOOLTOKEN); }
+"true"          { yylval->node = (__bridge_retained void *)[NRXBoolean yes]; RETURN_TOKEN(BOOLTOKEN); }
+"false"         { yylval->node = (__bridge_retained void *)[NRXBoolean no];  RETURN_TOKEN(BOOLTOKEN); }
 "NULL"          { yylval->node = (__bridge_retained void *)[NSNull null]; RETURN_TOKEN(NULLTOKEN); }
 "try"           RETURN_TOKEN(TRY);
 "catch"         RETURN_TOKEN(CATCH);

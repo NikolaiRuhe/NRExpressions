@@ -18,7 +18,7 @@
 
 @implementation NRXNoOperationNode
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	return nil;
 }
@@ -29,7 +29,7 @@
 
 @implementation NRXBreakNode
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	return [[NRXBreakResult alloc] init];
 }
@@ -40,7 +40,7 @@
 
 @implementation NRXContinueNode
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	return [[NRXContinueResult alloc] init];
 }
@@ -69,7 +69,7 @@
 
 @implementation NRXPrintNode
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(value, self.expression);
 	[interpreter print:value];
@@ -82,7 +82,7 @@
 
 @implementation NRXAssertNode
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_BOOL_EXPRESSION(success, self.expression);
 	if (! success)
@@ -96,7 +96,7 @@
 
 @implementation NRXErrorNode
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(value, self.expression);
 	return [NRXCustomError errorWithFormat:@"%@", value];
@@ -108,7 +108,7 @@
 
 @implementation NRXReturnNode
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(value, self.expression);
 	return [[NRXReturnResult alloc] initWithValue:value];
@@ -134,7 +134,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(expression, self.expression);
 	[interpreter assignValue:expression toSymbol:self.variableName];
@@ -173,7 +173,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(object, self.object);
 	EVALUATE_EXPRESSION(value, self.expression);
@@ -186,7 +186,7 @@
 #pragma clang diagnostic pop
 	}
 
-	return [object nrx_setValue:value forKey:self.propertyName];
+	return [NRXLookupError errorWithFormat:@"can not set '%@' on object of type %@", self.propertyName, [object nrx_typeString]];
 }
 
 @end
@@ -207,7 +207,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	for (NRXStatementNode *node in self.statements)
 	{
@@ -244,13 +244,13 @@
 	return @"Function";
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	[interpreter assignValue:self toGlobalSymbol:self.name];
 	return nil;
 }
 
-- (NRXValue *)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
+- (id <NRXValue>)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
 {
 	// create a function local scope
 	if (! [interpreter pushScope])
@@ -268,12 +268,12 @@
 	{
 		NRXSymbolNode *symbol = self.parameterList[idx];
 		assert([symbol isKindOfClass:[NRXSymbolNode class]]);
-		NRXValue *argument = arguments[idx];
+		id <NRXValue> argument = arguments[idx];
 		[interpreter assignValue:argument toSymbol:symbol.name];
 	}
 
 	// call function body
-	NRXValue *result = [self.body evaluate:interpreter];
+	id <NRXValue> result = [self.body evaluate:interpreter];
 
 	// restore scope
 	[interpreter popScope];
@@ -303,7 +303,7 @@
 	return self;
 }
 
-- (NRXValue *)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
+- (id <NRXValue>)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
 {
 	// check argument count
 	NSUInteger parameterCount = [self.parameterList count];
@@ -315,7 +315,7 @@
 	for (NSUInteger idx = 0; idx < argumentCount; ++idx)
 	{
 		Class variableClass = self.parameterList[idx];
-		NRXValue *argument = arguments[idx];
+		id <NRXValue> argument = arguments[idx];
 		if (! [argument isKindOfClass:variableClass])
 			return [NRXArgumentError errorWithFormat:@"bad argument type: %@", NSStringFromClass([argument class])];
 	}
@@ -359,12 +359,12 @@
 	return @"Function";
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	return self;
 }
 
-- (NRXValue *)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
+- (id <NRXValue>)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
 {
 	// create a function local scope
 	if (! [interpreter pushScope])
@@ -373,7 +373,7 @@
 	// call delegate
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-	NRXValue *result = [interpreter.delegate performSelector:_selector withObject:_name withObject:arguments];
+	id <NRXValue> result = [interpreter.delegate performSelector:_selector withObject:_name withObject:arguments];
 #pragma clang diagnostic pop
 
 	// restore scope
@@ -407,7 +407,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_BOOL_EXPRESSION(condition, self.condition);
 	if (condition)
@@ -441,7 +441,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	while (YES)
 	{
@@ -451,7 +451,7 @@
 			EVALUATE_BOOL_EXPRESSION(condition, self.condition);
 			if (! condition)
 				return nil;
-			NRXValue *value = [self.statement evaluate:interpreter];
+			id <NRXValue> value = [self.statement evaluate:interpreter];
 			if ([value isKindOfClass:[NRXInterruptExecutionResult class]])
 			{
 				if ([value isKindOfClass:[NRXBreakResult class]])
@@ -486,14 +486,14 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_LIST_EXPRESSION(list, self.list);
-	for (NRXValue *element in list)
+	for (id <NRXValue> element in list)
 	{
 		@autoreleasepool {
 			[interpreter assignValue:element toSymbol:self.variable];
-			NRXValue *value = [self.statement evaluate:interpreter];
+			id <NRXValue> value = [self.statement evaluate:interpreter];
 			if ([value isKindOfClass:[NRXInterruptExecutionResult class]])
 			{
 				if ([value isKindOfClass:[NRXBreakResult class]])
@@ -529,9 +529,9 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	NRXValue *value = [self.tryStatement evaluate:interpreter];
+	id <NRXValue> value = [self.tryStatement evaluate:interpreter];
 	if (! [value isKindOfClass:[NRXInterruptExecutionResult class]])
 		return nil;
 

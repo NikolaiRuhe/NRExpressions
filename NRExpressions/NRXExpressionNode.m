@@ -21,7 +21,7 @@
 
 @synthesize value = _value;
 
-- (id)initWithValue:(NRXValue *)value
+- (id)initWithValue:(id <NRXValue>)value
 {
 	self = [self init];
 	if (self != nil)
@@ -31,7 +31,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	return self.value;
 }
@@ -45,7 +45,7 @@
 
 @implementation NRXListLiteralNode
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	assert([self.value isKindOfClass:[NSArray class]]);
 
@@ -79,7 +79,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	return [interpreter lookupToken:self.token];
 }
@@ -102,7 +102,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	return [interpreter resolveSymbol:self.name];
 }
@@ -125,7 +125,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	[self doesNotRecognizeSelector:_cmd];
 	return nil;
@@ -151,7 +151,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	[self doesNotRecognizeSelector:_cmd];
 	return nil;
@@ -177,7 +177,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(callable, self.callable);
 
@@ -222,11 +222,15 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_LIST_EXPRESSION(list, self.listExpression);
-	EVALUATE_NUMBER_EXPRESSION(index, self.index);
-	NSInteger idx = [index integerValue];
+
+	EVALUATE_EXPRESSION(index, self.index);
+	if (! [index isKindOfClass:[NSDecimalNumber class]])
+		return [NRXArgumentError errorWithFormat:@"bad index argument"];
+
+	NSInteger idx = [(NSDecimalNumber *)index integerValue];
 
 	if (idx < 0 || idx >= (NSInteger)[list count])
 		return [NRXArgumentError errorWithFormat:@"%@: index out of bounds", index];
@@ -258,7 +262,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(object, self.object);
 
@@ -270,7 +274,7 @@
 #pragma clang diagnostic pop
 	}
 
-	return [object nrx_valueForKey:self.propertyName];
+	return [NRXLookupError errorWithFormat:@"no member '%@' on object of type %@", self.propertyName, [object nrx_typeString]];
 }
 
 @end
@@ -295,7 +299,7 @@
 	return self;
 }
 
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_BOOL_EXPRESSION(condition, self.condition);
 	if (condition)
@@ -314,10 +318,12 @@
 
 
 @implementation NRXNegationNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_DOUBLE_EXPRESSION(argument, self.argument);
-	return [NSNumber numberWithDouble:-argument];
+	EVALUATE_EXPRESSION(argument, self.argument);
+	if ([argument respondsToSelector:@selector(nrx_negation)])
+		return [argument nrx_negation];
+	return [NRXArgumentError errorWithFormat:@"negation not defined"];
 }
 @end
 
@@ -325,144 +331,199 @@
 
 
 @implementation NRXAdditionNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(left,  self.left);
 	EVALUATE_EXPRESSION(right, self.right);
-	if ([left isKindOfClass:[NSString class]] || [right isKindOfClass:[NSString class]])
-		return [NSString stringWithFormat:@"%@%@", left, right];
-	if ([left isKindOfClass:[NSNumber class]] && [right isKindOfClass:[NSNumber class]])
-		return [NSNumber numberWithDouble:[(NSNumber *)left doubleValue] + [(NSNumber *)right doubleValue]];
+
+	if ([left respondsToSelector:@selector(nrx_addition:)])
+		return [left nrx_addition:right];
 	return [NRXArgumentError errorWithFormat:@"'+' operator: bad operands"];
 }
 @end
 
 @implementation NRXSubtractionNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_DOUBLE_EXPRESSION(left,  self.left);
-	EVALUATE_DOUBLE_EXPRESSION(right, self.right);
-	return [NSNumber numberWithDouble:left - right];
+	EVALUATE_EXPRESSION(left,  self.left);
+	EVALUATE_EXPRESSION(right, self.right);
+
+	if ([left respondsToSelector:@selector(nrx_subtraction:)])
+		return [left nrx_subtraction:right];
+	return [NRXArgumentError errorWithFormat:@"'-' operator: bad operands"];
 }
 @end
 
 @implementation NRXMultiplicationNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_DOUBLE_EXPRESSION(left,  self.left);
-	EVALUATE_DOUBLE_EXPRESSION(right, self.right);
-	return [NSNumber numberWithDouble:left * right];
+	EVALUATE_EXPRESSION(left,  self.left);
+	EVALUATE_EXPRESSION(right, self.right);
+
+	if ([left respondsToSelector:@selector(nrx_multiplication:)])
+		return [left nrx_multiplication:right];
+	return [NRXArgumentError errorWithFormat:@"'*' operator: bad operands"];
 }
 @end
 
 @implementation NRXDivisionNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_DOUBLE_EXPRESSION(left,  self.left);
-	EVALUATE_DOUBLE_EXPRESSION(right, self.right);
-	if (right == 0)
-		return [NRXMathError errorWithFormat:@"division by zero"];
-	return [NSNumber numberWithDouble:left / right];
+	EVALUATE_EXPRESSION(left,  self.left);
+	EVALUATE_EXPRESSION(right, self.right);
+
+	if ([left respondsToSelector:@selector(nrx_division:)])
+		return [left nrx_division:right];
+	return [NRXArgumentError errorWithFormat:@"'/' operator: bad operands"];
 }
 @end
 
 @implementation NRXModulusNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_DOUBLE_EXPRESSION(left,  self.left);
-	EVALUATE_DOUBLE_EXPRESSION(right, self.right);
-	if (right == 0)
-		return [NRXMathError errorWithFormat:@"modulus division by zero"];
-	return [NSNumber numberWithDouble:fmod(left, right)];
+	EVALUATE_EXPRESSION(left,  self.left);
+	EVALUATE_EXPRESSION(right, self.right);
+
+	if ([left respondsToSelector:@selector(nrx_modulus:)])
+		return [left nrx_modulus:right];
+	return [NRXArgumentError errorWithFormat:@"'%' operator: bad operands"];
 }
 @end
 
 @implementation NRXLessThanNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_DOUBLE_EXPRESSION(left,  self.left);
-	EVALUATE_DOUBLE_EXPRESSION(right, self.right);
-	return [NSNumber numberWithBool:left < right];
+	EVALUATE_EXPRESSION(left,  self.left);
+	EVALUATE_EXPRESSION(right, self.right);
+
+	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+		return [NRXArgumentError errorWithFormat:@"'<' operator: bad operands"];
+
+	NRXError *error;
+	NSComparisonResult result = [left nrx_compare:right error:&error];
+	if (error != nil)
+		return error;
+	return [NRXBoolean booleanWithBool:result == NSOrderedAscending];
 }
 @end
 
 @implementation NRXGreaterThanNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_DOUBLE_EXPRESSION(left,  self.left);
-	EVALUATE_DOUBLE_EXPRESSION(right, self.right);
-	return [NSNumber numberWithBool:left > right];
+	EVALUATE_EXPRESSION(left,  self.left);
+	EVALUATE_EXPRESSION(right, self.right);
+
+	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+		return [NRXArgumentError errorWithFormat:@"'>' operator: bad operands"];
+
+	NRXError *error;
+	NSComparisonResult result = [left nrx_compare:right error:&error];
+	if (error != nil)
+		return error;
+	return [NRXBoolean booleanWithBool:result == NSOrderedDescending];
 }
 @end
 
 @implementation NRXGreaterOrEqualNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_DOUBLE_EXPRESSION(left,  self.left);
-	EVALUATE_DOUBLE_EXPRESSION(right, self.right);
-	return [NSNumber numberWithBool:left >= right];
+	EVALUATE_EXPRESSION(left,  self.left);
+	EVALUATE_EXPRESSION(right, self.right);
+
+	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+		return [NRXArgumentError errorWithFormat:@"'>=' operator: bad operands"];
+
+	NRXError *error;
+	NSComparisonResult result = [left nrx_compare:right error:&error];
+	if (error != nil)
+		return error;
+	return [NRXBoolean booleanWithBool:result != NSOrderedAscending];
 }
 @end
 
 @implementation NRXLessOrEqualNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_DOUBLE_EXPRESSION(left,  self.left);
-	EVALUATE_DOUBLE_EXPRESSION(right, self.right);
-	return [NSNumber numberWithBool:left <= right];
+	EVALUATE_EXPRESSION(left,  self.left);
+	EVALUATE_EXPRESSION(right, self.right);
+
+	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+		return [NRXArgumentError errorWithFormat:@"'>=' operator: bad operands"];
+
+	NRXError *error;
+	NSComparisonResult result = [left nrx_compare:right error:&error];
+	if (error != nil)
+		return error;
+	return [NRXBoolean booleanWithBool:result != NSOrderedDescending];
 }
 @end
 
 @implementation NRXNotEqualNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(left,  self.left);
 	EVALUATE_EXPRESSION(right, self.right);
-	return [NSNumber numberWithBool:! (left == right || [left isEqual:right])];
+
+	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+		return [NRXArgumentError errorWithFormat:@"'>=' operator: bad operands"];
+
+	NRXError *error;
+	NSComparisonResult result = [left nrx_compare:right error:&error];
+	if (error != nil)
+		return error;
+	return [NRXBoolean booleanWithBool:result != NSOrderedSame];
 }
 @end
 
 @implementation NRXEqualNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(left,  self.left);
 	EVALUATE_EXPRESSION(right, self.right);
-	return [NSNumber numberWithBool:left == right || [left isEqual:right]];
+
+	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+		return [NRXArgumentError errorWithFormat:@"'>=' operator: bad operands"];
+
+	NRXError *error;
+	NSComparisonResult result = [left nrx_compare:right error:&error];
+	if (error != nil)
+		return error;
+	return [NRXBoolean booleanWithBool:result == NSOrderedSame];
 }
 @end
 
 @implementation NRXLogicalAndNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_BOOL_EXPRESSION(left,  self.left);
 	
 	// care for short-circuiting right operand
 	if (! left)
-		return [NSNumber numberWithBool:NO];
+		return [NRXBoolean booleanWithBool:NO];
 	
 	EVALUATE_BOOL_EXPRESSION(right, self.right);
-	return [NSNumber numberWithBool:right];
+	return [NRXBoolean booleanWithBool:right];
 }
 @end
 
 @implementation NRXLogicalOrNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_BOOL_EXPRESSION(left,  self.left);
 	
 	// care for short-circuiting right operand
 	if (left)
-		return [NSNumber numberWithBool:YES];
+		return [NRXBoolean booleanWithBool:YES];
 	
 	EVALUATE_BOOL_EXPRESSION(right, self.right);
-	return [NSNumber numberWithBool:right];
+	return [NRXBoolean booleanWithBool:right];
 }
 @end
 
 @implementation NRXLogicalNegationNode
-- (NRXValue *)evaluate:(NRXInterpreter *)interpreter
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_BOOL_EXPRESSION(argument, self.argument);
-	return [NSNumber numberWithBool:! argument];
+	return [NRXBoolean booleanWithBool:! argument];
 }
 @end

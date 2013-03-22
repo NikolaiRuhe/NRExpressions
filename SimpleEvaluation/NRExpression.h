@@ -13,7 +13,7 @@
 - (BOOL)parseSourceString:(NSString *)sourceString;
 - (BOOL)parseSourceString:(NSString *)sourceString errorBlock:(NRXErrorBlock)errorBlock;
 
-- (NRXValue *)evaluate;
+- (id <NRXValue>)evaluate;
 
 @end
 

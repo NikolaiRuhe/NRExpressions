@@ -31,7 +31,7 @@
 	NRExpression *testExpression = [[NRExpression alloc] init];
 
 	__block NSMutableString *blockOutput = _testOutput;
-	testExpression.printBlock = ^(NRXValue *value) {
+	testExpression.printBlock = ^(id <NRXValue> value) {
 		[blockOutput appendFormat:@"%@\n", value];
 	};
 
@@ -93,6 +93,25 @@
 	evaluate(@"print \"Hello, World!\";");
 	expectOutput(@"Hello, World!\n");
 	expectResult(@"(null)");
+
+	evaluate(@"print 1 < 2 ? 'yes' : 'no';");
+	expectOutput(@"yes\n");
+	expectResult(@"(null)");
+	evaluate(@"print 1 <= 2 ? 'yes' : 'no';");
+	expectOutput(@"yes\n");
+	expectResult(@"(null)");
+	evaluate(@"print 1 == 1 ? 'yes' : 'no';");
+	expectOutput(@"yes\n");
+	expectResult(@"(null)");
+	evaluate(@"print 1 != 2 ? 'yes' : 'no';");
+	expectOutput(@"yes\n");
+	expectResult(@"(null)");
+	evaluate(@"print 2 > 1 ? 'yes' : 'no';");
+	expectOutput(@"yes\n");
+	expectResult(@"(null)");
+	evaluate(@"print 2 >= 1 ? 'yes' : 'no';");
+	expectOutput(@"yes\n");
+	expectResult(@"(null)");
 }
 
 - (void)testSimpleConstructs
@@ -105,7 +124,7 @@
 	expectOutput(@"");
 	expectResult(@"(null)");
 	
-	evaluate(@"foo(a, b) { return a + b; } print foo(\"answer: \", 42);");
+	evaluate(@"foo(a, b) { return a + b; } print foo(\"answer: \", \"42\");");
 	expectOutput(@"answer: 42\n");
 	expectResult(@"(null)");
 

@@ -40,31 +40,31 @@
 
 		node = [[NRXBlockFunctionNode alloc] initWithName:@"round"
 											parameterList:[NSArray arrayWithObject:[NSNumber class]]
-													block:^NRXValue *(NSArray *argv)
+													block:^id <NRXValue>(NSArray *argv)
 		{
-			return [NSNumber numberWithDouble:round([argv[0] doubleValue])];
+			return (NSDecimalNumber *)[NSDecimalNumber numberWithDouble:round([argv[0] doubleValue])];
 		}];
 		[defaultGlobalScope setObject:node forKey:node.name];
-		
+
 		node = [[NRXBlockFunctionNode alloc] initWithName:@"abs"
 											parameterList:[NSArray arrayWithObject:[NSNumber class]]
-													block:^NRXValue *(NSArray *argv)
-		{
-			return [NSNumber numberWithDouble:fabs([argv[0] doubleValue])];
-		}];
+													block:^id <NRXValue>(NSArray *argv)
+				{
+					return (NSDecimalNumber *)[NSDecimalNumber numberWithDouble:fabs([argv[0] doubleValue])];
+				}];
 		[defaultGlobalScope setObject:node forKey:node.name];
 
 		node = [[NRXBlockFunctionNode alloc] initWithName:@"random"
 											parameterList:[NSArray array]
-													block:^NRXValue *(NSArray *argv)
-		{
-			return [NSNumber numberWithDouble:arc4random()];
-		}];
+													block:^id <NRXValue>(NSArray *argv)
+				{
+					return (NSDecimalNumber *)[NSDecimalNumber numberWithDouble:arc4random()];
+				}];
 		[defaultGlobalScope setObject:node forKey:node.name];
-		
+
 		node = [[NRXBlockFunctionNode alloc] initWithName:@"eval"
 											parameterList:[NSArray arrayWithObject:[NSString class]]
-													block:^NRXValue *(NSArray *argv)
+													block:^id <NRXValue>(NSArray *argv)
 		{
 			__block NSString *errorMessage = nil;
 			NRXBlockNode *rootNode = NRXParserParseString(argv[0], ^(NSString *message, NSUInteger lineNumber) { errorMessage = message; });
@@ -101,17 +101,17 @@
 	return _globalScope;
 }
 
-- (NRXValue *)lookupToken:(NSString *)token
+- (id <NRXValue>)lookupToken:(NSString *)token
 {
 	if ([self.delegate respondsToSelector:@selector(lookupToken:)])
 		return [self.delegate lookupToken:token];
 	return [NRXInterpreterError errorWithFormat:@"token lookup not supported"];
 }
 
-- (NRXValue *)resolveSymbol:(NSString *)symbol
+- (id <NRXValue>)resolveSymbol:(NSString *)symbol
 {
 	assert(symbol != nil);
-	NRXValue *value = [[self currentScope] objectForKey:symbol];
+	id <NRXValue> value = [[self currentScope] objectForKey:symbol];
 	if (value != nil)
 		return value;
 
@@ -128,7 +128,7 @@
 	return [NRXLookupError errorWithFormat:@"symbol not found: \"%@\"", symbol];
 }
 
-- (void)assignValue:(NRXValue *)value toSymbol:(NSString *)symbol
+- (void)assignValue:(id <NRXValue>)value toSymbol:(NSString *)symbol
 {
 	assert(symbol != nil);
 	if (value == nil)
@@ -136,7 +136,7 @@
 	[[self currentScope] setObject:value forKey:symbol];
 }
 
-- (void)assignValue:(NRXValue *)value toGlobalSymbol:(NSString *)symbol
+- (void)assignValue:(id <NRXValue>)value toGlobalSymbol:(NSString *)symbol
 {
 	assert(symbol != nil);
 	if (value == nil)
@@ -144,7 +144,7 @@
 	[[self globalScope] setObject:value forKey:symbol];
 }
 
-- (void)print:(NRXValue *)value
+- (void)print:(id <NRXValue>)value
 {
 	if (self.printBlock != NULL)
 		self.printBlock(value);
@@ -176,12 +176,12 @@
 	return now - _start > self.maxEvaluationTime;
 }
 
-- (NRXValue *)runWithRootNode:(NRXNode *)node
+- (id <NRXValue>)runWithRootNode:(NRXNode *)node
 {
 	if (node == nil)
 		return nil;
 
-	NRXValue *result = [node evaluate:self];
+	id <NRXValue> result = [node evaluate:self];
 
 	if ([result isKindOfClass:[NRXReturnResult class]])
 		return ((NRXReturnResult *)result).value;
