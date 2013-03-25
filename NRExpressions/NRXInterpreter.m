@@ -32,51 +32,7 @@
 
 + (NSDictionary *)defaultGlobalScope
 {
-	static NSMutableDictionary *defaultGlobalScope = nil;
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		defaultGlobalScope = [[NSMutableDictionary alloc] init];
-		NRXBlockFunctionNode *node;
-
-		node = [[NRXBlockFunctionNode alloc] initWithName:@"round"
-											parameterList:[NSArray arrayWithObject:[NSNumber class]]
-													block:^id <NRXValue>(NSArray *argv)
-		{
-			return (NSDecimalNumber *)[NSDecimalNumber numberWithDouble:round([argv[0] doubleValue])];
-		}];
-		[defaultGlobalScope setObject:node forKey:node.name];
-
-		node = [[NRXBlockFunctionNode alloc] initWithName:@"abs"
-											parameterList:[NSArray arrayWithObject:[NSNumber class]]
-													block:^id <NRXValue>(NSArray *argv)
-				{
-					return (NSDecimalNumber *)[NSDecimalNumber numberWithDouble:fabs([argv[0] doubleValue])];
-				}];
-		[defaultGlobalScope setObject:node forKey:node.name];
-
-		node = [[NRXBlockFunctionNode alloc] initWithName:@"random"
-											parameterList:[NSArray array]
-													block:^id <NRXValue>(NSArray *argv)
-				{
-					return (NSDecimalNumber *)[NSDecimalNumber numberWithDouble:arc4random()];
-				}];
-		[defaultGlobalScope setObject:node forKey:node.name];
-
-		node = [[NRXBlockFunctionNode alloc] initWithName:@"eval"
-											parameterList:[NSArray arrayWithObject:[NSString class]]
-													block:^id <NRXValue>(NSArray *argv)
-		{
-			__block NSString *errorMessage = nil;
-			NRXBlockNode *rootNode = NRXParserParseString(argv[0], ^(NSString *message, NSUInteger lineNumber) { errorMessage = message; });
-			if (rootNode == nil)
-				return [NRXSyntaxError errorWithFormat:@"syntax error in eval: %@", errorMessage];
-
-			NRXInterpreter *interpreter = [[[self class] alloc] init];
-			return [interpreter runWithRootNode:rootNode];
-		}];
-		[defaultGlobalScope setObject:node forKey:node.name];
-	});
-	return defaultGlobalScope;
+	return @{};
 }
 
 - (NSMutableArray *)stack

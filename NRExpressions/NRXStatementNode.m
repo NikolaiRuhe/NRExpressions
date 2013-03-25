@@ -317,7 +317,7 @@
 		Class variableClass = self.parameterList[idx];
 		id <NRXValue> argument = arguments[idx];
 		if (! [argument isKindOfClass:variableClass])
-			return [NRXArgumentError errorWithFormat:@"bad argument type: %@", NSStringFromClass([argument class])];
+			return [NRXArgumentError errorWithFormat:@"bad argument type: %@", [argument nrx_typeString]];
 	}
 	
 	return self.block(arguments);
