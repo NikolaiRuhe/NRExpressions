@@ -84,7 +84,7 @@ static void *parseSymbol(const char* str)
 "error"         RETURN_TOKEN(ERROR);
 "return"        RETURN_TOKEN(RETURN);
 
-[$#][_a-zA-Z][_a-zA-Z0-9]* {
+[$]+[_a-zA-Z][_a-zA-Z0-9]* {
                 yylval->node = parseSymbol(yytext);
                 RETURN_TOKEN(ID_LOOKUP);
             }
