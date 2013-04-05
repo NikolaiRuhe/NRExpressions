@@ -348,7 +348,7 @@
 			if (*s++ == ':')
 				colonCount += 1;
 		}
-		NSAssert(colonCount == 2, @"bad selector in NRXDelegateCallbackNode");
+		NSAssert(colonCount == 1, @"bad selector in NRXDelegateCallbackNode");
 #endif
 	}
 	return self;
@@ -373,7 +373,7 @@
 	// call delegate
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-	id <NRXValue> result = [interpreter.delegate performSelector:_selector withObject:_name withObject:arguments];
+	id <NRXValue> result = [interpreter.delegate performSelector:_selector withObject:arguments];
 #pragma clang diagnostic pop
 
 	// restore scope

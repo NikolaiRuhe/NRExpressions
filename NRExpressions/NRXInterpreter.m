@@ -75,10 +75,18 @@
 	if (value != nil)
 		return value;
 
-	if ([self.delegate respondsToSelector:@selector(resolveSymbol:)]) {
-		value = [self.delegate resolveSymbol:symbol];
-		if (value != nil)
-			return value;
+	if (self.delegate != nil) {
+
+		NSString *selectorString = [NSString stringWithFormat:@"nrx_%@_callWithArguments:", symbol];
+		SEL selector = NSSelectorFromString(selectorString);
+		if ([self.delegate respondsToSelector:selector])
+			return [[NRXDelegateCallbackNode alloc] initWithName:symbol selector:selector];
+
+		if ([self.delegate respondsToSelector:@selector(resolveSymbol:)]) {
+			value = [self.delegate resolveSymbol:symbol];
+			if (value != nil)
+				return value;
+		}
 	}
 
 	return [NRXLookupError errorWithFormat:@"symbol not found: \"%@\"", symbol];
