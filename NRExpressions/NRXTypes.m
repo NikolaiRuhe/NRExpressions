@@ -31,69 +31,127 @@
 
 
 @implementation NSNull (NRXValueAdditions)
+
 + (NSString *)nrx_typeString
 {
 	return @"Null";
 }
+
 @end
 
+
 @implementation NSArray (NRXValueAdditions)
+
 + (NSString *)nrx_typeString
 {
 	return @"List";
 }
+
 - (NSDecimalNumber *)nrx_count
 {
 	return [NSDecimalNumber decimalNumberWithMantissa:[self count] exponent:0 isNegative:NO];
 }
+
 @end
 
+
 @implementation NSString (NRXValueAdditions)
+
 + (NSString *)nrx_typeString
 {
 	return @"String";
 }
+
 - (NSDecimalNumber *)nrx_len
 {
 	return [NSDecimalNumber decimalNumberWithMantissa:[self length] exponent:0 isNegative:NO];
 }
+
 - (id <NRXValue>)nrx_addition:(id <NRXValue>)argument
 {
 	if ([argument isKindOfClass:[NSString class]])
 		return [self stringByAppendingString:(NSString *)argument];
 	return [NRXArgumentError errorWithFormat:@"operand mismatch in addition"];
 }
+
+- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error
+{
+	if (! [argument isKindOfClass:[self class]]) {
+		if (error != NULL) {
+			*error = [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
+			return NSOrderedSame;
+		}
+	}
+
+	if (error != NULL)
+		*error = nil;
+
+	return [self compare:(id)argument];
+}
+
 @end
 
+
+@implementation NSDate (NRXValueAdditions)
+
++ (NSString *)nrx_typeString
+{
+	return @"Date";
+}
+
+- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error
+{
+	if (! [argument isKindOfClass:[self class]]) {
+		if (error != NULL) {
+			*error = [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
+			return NSOrderedSame;
+		}
+	}
+
+	if (error != NULL)
+		*error = nil;
+
+	return [self compare:(id)argument];
+}
+
+@end
+
+
 @implementation NSDecimalNumber (NRXValueAdditions)
+
 + (NSString *)nrx_typeString
 {
 	return @"Number";
 }
+
 - (id <NRXValue>)nrx_negation
 {
 	NSDecimal decimal = [self decimalValue];
 	decimal._isNegative = decimal._isNegative ? 0 : 1;
 	return [NSDecimalNumber decimalNumberWithDecimal:decimal];
 }
+
 - (id <NRXValue>)nrx_addition:(id <NRXValue>)argument
 {
 	if ([argument isKindOfClass:[NSDecimalNumber class]])
 		return [self decimalNumberByAdding:(NSDecimalNumber *)argument];
 	return [NRXArgumentError errorWithFormat:@"operand mismatch in addition"];
 }
+
 - (id <NRXValue>)nrx_subtraction:(id <NRXValue>)argument
 {
 	if ([argument isKindOfClass:[NSDecimalNumber class]])
 		return [self decimalNumberBySubtracting:(NSDecimalNumber *)argument];
 	return [NRXArgumentError errorWithFormat:@"operand mismatch in subtraction"];
 }
+
 - (id <NRXValue>)nrx_multiplication:(id <NRXValue>)argument
 {
 	if ([argument isKindOfClass:[NSDecimalNumber class]])
 		return [self decimalNumberByMultiplyingBy:(NSDecimalNumber *)argument];
 	return [NRXArgumentError errorWithFormat:@"operand mismatch in multiplication"];
 }
+
 - (id <NRXValue>)nrx_division:(id <NRXValue>)argument
 {
 	if (! [argument isKindOfClass:[NSDecimalNumber class]])
@@ -106,6 +164,7 @@
 		return [NRXMathError errorWithFormat:@"division by zero"];
 	return [NSDecimalNumber decimalNumberWithDecimal:result];
 }
+
 - (id <NRXValue>)nrx_modulus:(id <NRXValue>)argument
 {
 	if (! [argument isKindOfClass:[NSDecimalNumber class]])
@@ -135,6 +194,7 @@
 
 	return [NSDecimalNumber decimalNumberWithDecimal:result];
 }
+
 - (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error
 {
 	if (! [argument isKindOfClass:[NSDecimalNumber class]]) {
@@ -149,9 +209,12 @@
 
 	return [self compare:(NSDecimalNumber *)argument];
 }
+
 @end
 
+
 @implementation NRXBoolean
+
 
 + (id)allocWithZone:(NSZone *)zone
 {
@@ -208,6 +271,7 @@
 }
 
 @end
+
 
 @implementation NRXBreakResult    @end
 @implementation NRXContinueResult @end

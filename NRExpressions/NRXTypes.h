@@ -9,18 +9,14 @@
 @class NRXInterpreter, NRXError;
 
 
-
-@interface NSObject (NRXValueAdditions)
-+ (NSString *)nrx_typeString;
-- (NSString *)nrx_typeString;
-@end
-
 // Common value functionality. This can be used to bridge to Objective-C objects.
 @protocol NRXValue <NSObject>
 @optional
 
 + (NSString *)nrx_typeString;
 - (NSString *)nrx_typeString;
+
+- (id <NRXValue>)nrx_promoteToValue;
 
 - (id <NRXValue>)nrx_negation;
 
@@ -44,6 +40,9 @@
 
 @interface NSString (NRXValueAdditions) <NRXValue>
 - (NSDecimalNumber *)nrx_len;
+@end
+
+@interface NSDate (NRXValueAdditions) <NRXValue>
 @end
 
 @interface NSDecimalNumber (NRXValueAdditions) <NRXValue>
@@ -94,22 +93,18 @@ assert(! [var isKindOfClass:[NRXReturnResult class]]); \
 if ([var isKindOfClass:[NRXInterruptExecutionResult class]]) \
 	return var;
 
-#define EVALUATE_EXPRESSION_OF_TYPE(var, node, expectedClass) \
-EVALUATE_EXPRESSION(var, (node)) \
-if (! [var isKindOfClass:expectedClass]) \
-	return [NRXTypeError errorWithFormat:@"type error: %@ expected, got %@", [expectedClass nrx_typeString], [var nrx_typeString]];
+#define EVALUATE_VALUE(var, node) \
+id <NRXValue> var = [(node) evaluate:interpreter]; \
+if ([var isKindOfClass:[NRXInterruptExecutionResult class]]) \
+	return var; \
+if ([var respondsToSelector:@selector(nrx_promoteToValue)]) \
+	var = [var nrx_promoteToValue];
 
-#define EVALUATE_LIST_EXPRESSION(var, node) \
-NSArray *var; \
-{ \
-	EVALUATE_EXPRESSION_OF_TYPE(value, (node), [NSArray class]); \
-	var = (NSArray *)value; \
-}
 
 #define EVALUATE_BOOL_EXPRESSION(var, node) \
 BOOL var; \
 { \
-	EVALUATE_EXPRESSION(value, (node)) \
+	EVALUATE_VALUE(value, (node)) \
 	if (! [value isKindOfClass:[NRXBoolean class]]) \
 		return [NRXTypeError errorWithFormat:@"type error: boolean expression expected, got %@", [value nrx_typeString]]; \
 	var = [(id)value boolValue]; \

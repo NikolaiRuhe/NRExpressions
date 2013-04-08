@@ -488,8 +488,11 @@
 
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_LIST_EXPRESSION(list, self.list);
-	for (id <NRXValue> element in list)
+	EVALUATE_VALUE(list, self.list);
+	if (! [list isKindOfClass:[NSArray class]])
+		return [NRXTypeError errorWithFormat:@"type error: List expected, got %@", [list nrx_typeString]];
+
+	for (id <NRXValue> element in (NSArray *)list)
 	{
 		@autoreleasepool {
 			[interpreter assignValue:element toSymbol:self.variable];
