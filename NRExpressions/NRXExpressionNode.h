@@ -19,11 +19,12 @@
 - (id)initWithValue:(id <NRXValue>)value;
 @end
 
-@interface NRXNumberLiteralNode : NRXLiteralNode @end
-@interface NRXBoolLiteralNode   : NRXLiteralNode @end
-@interface NRXNullLiteralNode   : NRXLiteralNode @end
-@interface NRXStringLiteralNode : NRXLiteralNode @end
-@interface NRXListLiteralNode   : NRXLiteralNode @end
+@interface NRXNumberLiteralNode     : NRXLiteralNode @end
+@interface NRXBoolLiteralNode       : NRXLiteralNode @end
+@interface NRXNullLiteralNode       : NRXLiteralNode @end
+@interface NRXStringLiteralNode     : NRXLiteralNode @end
+@interface NRXListLiteralNode       : NRXLiteralNode @end
+@interface NRXDictionaryLiteralNode : NRXLiteralNode @end
 
 
 
@@ -65,9 +66,9 @@
 
 
 @interface NRXSubscriptNode : NRXExpressionNode
-@property (nonatomic, readonly, retain) NRXExpressionNode *listExpression;
-@property (nonatomic, readonly, retain) NRXExpressionNode *index;
-- (id)initWithListExpression:(NRXExpressionNode *)listExpression index:(NRXExpressionNode *)index;
+@property (nonatomic, readonly, retain) NRXExpressionNode *subscriptableExpression;
+@property (nonatomic, readonly, retain) NRXExpressionNode *subscriptExpression;
+- (id)initWithSubscriptableExpression:(NRXExpressionNode *)subscriptableExpression subscriptExpression:(NRXExpressionNode *)subscriptExpression;
 @end
 
 

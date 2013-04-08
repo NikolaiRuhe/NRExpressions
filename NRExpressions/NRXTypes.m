@@ -52,6 +52,46 @@
 	return [NSDecimalNumber decimalNumberWithMantissa:[self count] exponent:0 isNegative:NO];
 }
 
+- (id <NRXValue>)nrx_subscript:(id <NRXValue>)argument
+{
+	if (! [argument isKindOfClass:[NSDecimalNumber class]])
+		return [NRXArgumentError errorWithFormat:@"bad subscript argument"];
+
+	NSInteger idx = [(NSDecimalNumber *)argument integerValue];
+
+	if (idx < 0 || idx >= (NSInteger)[self count])
+		return [NRXArgumentError errorWithFormat:@"%@: subscript out of range", argument];
+
+	return self[idx];
+}
+
+@end
+
+
+@implementation NSDictionary (NRXValueAdditions)
+
++ (NSString *)nrx_typeString
+{
+	return @"Dictionary";
+}
+
+- (NSDecimalNumber *)nrx_count
+{
+	return [NSDecimalNumber decimalNumberWithMantissa:[self count] exponent:0 isNegative:NO];
+}
+
+- (id <NRXValue>)nrx_subscript:(id <NRXValue>)argument
+{
+	if (argument == nil)
+		argument = [NSNull null];
+
+	id <NRXValue> result = self[argument];
+	if (result == nil)
+		return [NRXArgumentError errorWithFormat:@"unknown key: %@", argument];
+
+	return result;
+}
+
 @end
 
 

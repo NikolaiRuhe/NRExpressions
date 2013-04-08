@@ -109,6 +109,30 @@
 	evaluate(@"print 2 >= 1 ? 'yes' : 'no';");
 	expectOutput(@"yes\n");
 	expectResult(@"(null)");
+
+	evaluate(@"print 1 + 1;");
+	expectOutput(@"2\n");
+	expectResult(@"(null)");
+	evaluate(@"print 3 - 1;");
+	expectOutput(@"2\n");
+	expectResult(@"(null)");
+	evaluate(@"print 1 * 2;");
+	expectOutput(@"2\n");
+	expectResult(@"(null)");
+	evaluate(@"print 4 / 2;");
+	expectOutput(@"2\n");
+	expectResult(@"(null)");
+	evaluate(@"print 5 % 3;");
+	expectOutput(@"2\n");
+	expectResult(@"(null)");
+
+	evaluate(@"print [1, 2, 3][1];");
+	expectOutput(@"2\n");
+	expectResult(@"(null)");
+
+	evaluate(@"print ['1' : 1, '2' : 2, '3' : 3]['2'];");
+	expectOutput(@"2\n");
+	expectResult(@"(null)");
 }
 
 - (void)testSimpleConstructs

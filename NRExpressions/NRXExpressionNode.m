@@ -64,6 +64,32 @@
 @end
 
 
+@implementation NRXDictionaryLiteralNode
+
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
+{
+	assert([self.value isKindOfClass:[NSArray class]]);
+
+	NSMutableDictionary *resultDictionary = [NSMutableDictionary dictionary];
+	for (NSArray *keyValuePair in (NSArray *)(self.value))
+	{
+		EVALUATE_VALUE(key, keyValuePair[0]);
+		if (! [key isKindOfClass:[NSString class]])
+			return [NRXArgumentError errorWithFormat:@"Dictionary literal: key not a String: %@", key];
+
+		EVALUATE_EXPRESSION(value,   keyValuePair[1]);
+		if (value == nil)
+			value = [NSNull null];
+
+		[resultDictionary setObject:value forKey:(NSString *)key];
+	}
+
+	return resultDictionary;
+}
+
+@end
+
+
 
 @implementation NRXLookupNode
 
@@ -208,36 +234,29 @@
 
 @implementation NRXSubscriptNode
 
-@synthesize listExpression = _listExpression;
-@synthesize index = _index;
+@synthesize subscriptableExpression = _subscriptableExpression;
+@synthesize subscriptExpression = _subscriptExpression;
 
-- (id)initWithListExpression:(NRXExpressionNode *)listExpression index:(NRXExpressionNode *)index
+- (id)initWithSubscriptableExpression:(NRXExpressionNode *)subscriptableExpression subscriptExpression:(NRXExpressionNode *)subscriptExpression
 {
 	self = [self init];
 	if (self != nil)
 	{
-		_listExpression  = listExpression;
-		_index = index;
+		_subscriptableExpression  = subscriptableExpression;
+		_subscriptExpression = subscriptExpression;
 	}
 	return self;
 }
 
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(list, self.listExpression);
-	if (! [list isKindOfClass:[NSArray class]])
-		return [NRXTypeError errorWithFormat:@"type error: List expected, got %@", [list nrx_typeString]];
+	EVALUATE_EXPRESSION(subscriptable, self.subscriptableExpression);
+	EVALUATE_VALUE(subscript, self.subscriptExpression);
 
-	EVALUATE_VALUE(index, self.index);
-	if (! [index isKindOfClass:[NSDecimalNumber class]])
-		return [NRXArgumentError errorWithFormat:@"bad index argument"];
+	if ([subscriptable respondsToSelector:@selector(nrx_subscript:)])
+		return [subscriptable nrx_subscript:subscript];
 
-	NSInteger idx = [(NSDecimalNumber *)index integerValue];
-
-	if (idx < 0 || idx >= (NSInteger)[(NSArray *)list count])
-		return [NRXArgumentError errorWithFormat:@"%@: index out of bounds", index];
-
-	return list[idx];
+	return [NRXArgumentError errorWithFormat:@"subscript operator: object not subscriptable"];
 }
 
 @end

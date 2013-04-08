@@ -26,6 +26,8 @@
 - (id <NRXValue>)nrx_division:(id <NRXValue>)argument;
 - (id <NRXValue>)nrx_modulus:(id <NRXValue>)argument;
 
+- (id <NRXValue>)nrx_subscript:(id <NRXValue>)argument;
+
 - (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error;
 
 @end
@@ -35,6 +37,10 @@
 @end
 
 @interface NSArray (NRXValueAdditions) <NRXValue>
+- (NSDecimalNumber *)nrx_count;
+@end
+
+@interface NSDictionary (NRXValueAdditions) <NRXValue>
 - (NSDecimalNumber *)nrx_count;
 @end
 

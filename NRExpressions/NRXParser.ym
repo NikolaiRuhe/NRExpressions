@@ -72,7 +72,7 @@ static inline void *push(id object)
 %nonassoc UNOT
 %left '.' '[' '('
 
-%type <node> statement statements block expr exprlist literal functionprep
+%type <node> statement statements block expr exprlist keyvaluelist literal functionprep
 
 %%
 
@@ -161,7 +161,7 @@ expr:
   | expr EQ expr                             { $$ = push([[NRXEqualNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr '(' exprlist ')'                    { $$ = push([[NRXCallNode alloc] initWithCallable:pop($1) arguments:pop($3)]); }
   | expr '.' SYMBOL                          { $$ = push([[NRXPropertyAccessNode alloc] initWithObject:pop($1) propertyName:pop($3)]); }
-  | expr '[' expr ']'                        { $$ = push([[NRXSubscriptNode alloc] initWithListExpression:pop($1) index:pop($3)]); }
+  | expr '[' expr ']'                        { $$ = push([[NRXSubscriptNode alloc] initWithSubscriptableExpression:pop($1) subscriptExpression:pop($3)]); }
   | '(' expr ')'                             { $$ = $2; }
   ;
 
@@ -172,12 +172,18 @@ literal:
   | STRING                                   { $$ = push([[NRXStringLiteralNode alloc] initWithValue:pop($1)]); }
   | NULLTOKEN                                { $$ = push([[NRXNullLiteralNode   alloc] initWithValue:pop($1)]); }
   | '[' exprlist ']'                         { $$ = push([[NRXListLiteralNode   alloc] initWithValue:pop($2)]); }
+  | '[' keyvaluelist ']'                     { $$ = push([[NRXDictionaryLiteralNode alloc] initWithValue:pop($2)]); }
   ;
 
 exprlist:
     /* empty */                              { $$ = push([[NSMutableArray alloc] init]); }
   | expr                                     { $$ = push([[NSMutableArray alloc] initWithObjects:pop($1), nil]); }
   | exprlist ',' expr                        { $$ = $1; [(__bridge NSMutableArray *)$1 addObject:pop($3)]; }
+  ;
+
+keyvaluelist:
+    expr ':' expr                            { $$ = push([NSMutableArray arrayWithObject:@[pop($1), pop($3)]]); }
+  | keyvaluelist ',' expr ':' expr           { $$ = $1; [(__bridge NSMutableArray *)$1 addObject:@[pop($3), pop($5)]]; }
   ;
 
 %%
