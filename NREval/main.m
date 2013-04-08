@@ -1,5 +1,4 @@
 #import <Foundation/Foundation.h>
-#import "NRExpression.h"
 #import "NRExpressions.h"
 
 int main (int argc, const char * argv[])
@@ -22,29 +21,26 @@ int main (int argc, const char * argv[])
 		NSData *data = [input readDataToEndOfFile];
 	    NSString *sourceString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
-		NRExpression *expression = [[NRExpression alloc] init];
-		BOOL success = [expression parseSourceString:sourceString errorBlock:^(NSString *message, NSUInteger lineNumber) {
-			fprintf(stderr, "error in line %d: %s\n", (int)lineNumber, [message UTF8String]);
-		}];
+		__block int status = 0;
+		id <NRXValue> result = [NRXInterpreter evaluateSourceString:sourceString
+													 withErrorBlock:^(NSString *message, NSUInteger lineNumber) {
+														 fprintf(stderr, "error in line %d: %s\n", (int)lineNumber, [message UTF8String]);
+														 status = 1;
+													 }
+														 printBlock:^(id <NRXValue> output) {
+															 fprintf(stdout, "%s\n", [[output description] UTF8String]);
+														 }];
 
-		if (! success)
-			return 1;
-
-		expression.printBlock = ^(id <NRXValue> output) {
-			fprintf(stdout, "%s\n", [[output description] UTF8String]);
-		};
-
-		NSObject *result = [expression evaluate];
 		if (result == nil)
-			return 0;
+			return status;
 
 		if ([result isKindOfClass:[NRXError class]])
 		{
 			fprintf(stderr, "%s\n", [[result description] UTF8String]);
-			return 1;
+			return 2;
 		}
 
 		fprintf(stdout, "%s\n", [[result description] UTF8String]);
+		return 0;
 	}
-    return 0;
 }

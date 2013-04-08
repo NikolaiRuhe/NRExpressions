@@ -6,6 +6,7 @@
 //
 
 #import "NRXTypes.h"
+@class NRXBlockNode;
 
 
 @protocol NRXInterpreterDelegate <NSObject>
@@ -43,5 +44,11 @@ typedef void (^NRXErrorBlock)(NSString *message, NSUInteger lineNumber);
 - (BOOL)timeout;
 
 - (id <NRXValue>)runWithRootNode:(NRXNode *)node;
+
++ (NRXBlockNode *)parseSourceString:(NSString *)sourceString withErrorBlock:(NRXErrorBlock)errorBlock;
+
+// convenience parse and evaluate. blacks can be nil.
++ (id <NRXValue>)evaluateSourceString:(NSString *)sourceString withErrorBlock:(NRXErrorBlock)errorBlock printBlock:(NRXPrintBlock)printBlock;
++ (id <NRXValue>)evaluateSourceString:(NSString *)sourceString;
 
 @end

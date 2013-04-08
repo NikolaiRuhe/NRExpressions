@@ -25,11 +25,9 @@
 		91C388A216F8E278006306D1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3889B16F8E278006306D1 /* main.m */; };
 		91C388A316F8E278006306D1 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91C3889C16F8E278006306D1 /* MainMenu.xib */; };
 		91C388A416F8E278006306D1 /* NRAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C3889E16F8E278006306D1 /* NRAppDelegate.m */; };
-		91C388A516F8E278006306D1 /* NRExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C388A016F8E278006306D1 /* NRExpression.m */; };
 		91C388AE16F8E288006306D1 /* mandelprot.py in Resources */ = {isa = PBXBuildFile; fileRef = 91C388A916F8E288006306D1 /* mandelprot.py */; };
 		91C388B016F8E288006306D1 /* NRExpressionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C388AC16F8E288006306D1 /* NRExpressionsTests.m */; };
 		91C388B416F8E293006306D1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C388B216F8E293006306D1 /* main.m */; };
-		91C388B916F8E6D3006306D1 /* NRExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C388A016F8E278006306D1 /* NRExpression.m */; };
 		91C388BC16F8E96D006306D1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 91C388BB16F8E96D006306D1 /* README.md */; };
 		91FBC77214880F980075E6F5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FBC77114880F980075E6F5 /* Cocoa.framework */; };
 		91FBC79014880F980075E6F5 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FBC78F14880F980075E6F5 /* SenTestingKit.framework */; };
@@ -78,8 +76,6 @@
 		91C3889C16F8E278006306D1 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		91C3889D16F8E278006306D1 /* NRAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRAppDelegate.h; sourceTree = "<group>"; };
 		91C3889E16F8E278006306D1 /* NRAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NRAppDelegate.m; sourceTree = "<group>"; };
-		91C3889F16F8E278006306D1 /* NRExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRExpression.h; sourceTree = "<group>"; };
-		91C388A016F8E278006306D1 /* NRExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NRExpression.m; sourceTree = "<group>"; };
 		91C388A816F8E288006306D1 /* mandelprot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mandelprot.c; sourceTree = "<group>"; };
 		91C388A916F8E288006306D1 /* mandelprot.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = mandelprot.py; sourceTree = "<group>"; };
 		91C388AB16F8E288006306D1 /* NRExpressionsTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NRExpressionsTests.h; sourceTree = "<group>"; };
@@ -155,8 +151,6 @@
 				91C3889C16F8E278006306D1 /* MainMenu.xib */,
 				91C3889D16F8E278006306D1 /* NRAppDelegate.h */,
 				91C3889E16F8E278006306D1 /* NRAppDelegate.m */,
-				91C3889F16F8E278006306D1 /* NRExpression.h */,
-				91C388A016F8E278006306D1 /* NRExpression.m */,
 			);
 			path = SimpleEvaluation;
 			sourceTree = "<group>";
@@ -349,7 +343,6 @@
 				91C3889616F8E220006306D1 /* NRXStatementNode.m in Sources */,
 				91C3889916F8E220006306D1 /* NRXTypes.m in Sources */,
 				91C388B416F8E293006306D1 /* main.m in Sources */,
-				91C388B916F8E6D3006306D1 /* NRExpression.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,7 +359,6 @@
 				91C3889716F8E220006306D1 /* NRXTypes.m in Sources */,
 				91C388A216F8E278006306D1 /* main.m in Sources */,
 				91C388A416F8E278006306D1 /* NRAppDelegate.m in Sources */,
-				91C388A516F8E278006306D1 /* NRExpression.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

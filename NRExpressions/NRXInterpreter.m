@@ -154,4 +154,41 @@
 	return result;
 }
 
++ (NRXBlockNode *)parseSourceString:(NSString *)sourceString withErrorBlock:(NRXErrorBlock)errorBlock
+{
+	NRXBlockNode *rootNode = NRXParserParseString(sourceString, errorBlock);
+	assert(rootNode == nil || [rootNode isKindOfClass:[NRXBlockNode class]]);
+	return rootNode;
+}
+
++ (id <NRXValue>)evaluateSourceString:(NSString *)sourceString
+{
+	return [self evaluateSourceString:sourceString
+					   withErrorBlock:NULL
+						   printBlock:NULL];
+}
+
++ (id <NRXValue>)evaluateSourceString:(NSString *)sourceString withErrorBlock:(NRXErrorBlock)errorBlock printBlock:(NRXPrintBlock)printBlock
+{
+	NRXInterpreter *interpreter = [[self alloc] init];
+
+	if (errorBlock == NULL)
+	{
+		errorBlock = ^ void (NSString *message, NSUInteger lineNumber)
+		{
+			NSLog(@"error in line %lu: %@", (unsigned long)lineNumber, message);
+		};
+	}
+
+	NRXBlockNode *rootNode = [self parseSourceString:sourceString withErrorBlock:errorBlock];
+
+	if (rootNode == nil)
+		return nil;
+
+	if (printBlock != NULL)
+		interpreter.printBlock = printBlock;
+
+	return [interpreter runWithRootNode:rootNode];
+}
+
 @end

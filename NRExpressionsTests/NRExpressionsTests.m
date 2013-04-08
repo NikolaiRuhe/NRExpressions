@@ -1,5 +1,4 @@
 #import "NRExpressionsTests.h"
-#import "NRExpression.h"
 #import "NRExpressions.h"
 
 @interface NRXEvaluationTests ()
@@ -28,32 +27,30 @@
 {
 	_testResult = [[NSMutableString alloc] init];
 	_testOutput = [[NSMutableString alloc] init];
-	NRExpression *testExpression = [[NRExpression alloc] init];
+//	NRExpression *testExpression = [[NRExpression alloc] init];
 
+	BOOL __block error = NO;
+	NRXBlockNode *rootNode = [NRXInterpreter parseSourceString:sourceString
+												withErrorBlock:^(NSString *message, NSUInteger lineNumber) {
+													NSLog(@"error in line %lu: %@", (unsigned long)lineNumber, message);
+													error = YES;
+												}];
+	if (rootNode == nil) {
+		STAssertTrue(error, @"no error while parsing");
+		return NO;
+	}
+
+	STAssertFalse(error, @"error while parsing");
+	STAssertTrue([rootNode isKindOfClass:[NRXBlockNode class]], @"bad root node");
+
+	NRXInterpreter *interpreter = [NRXInterpreter new];
 	__block NSMutableString *blockOutput = _testOutput;
-	testExpression.printBlock = ^(id <NRXValue> value) {
+	interpreter.printBlock = ^(id <NRXValue> value) {
 		[blockOutput appendFormat:@"%@\n", value];
 	};
 
-	STAssertNotNil(testExpression, @"could not create expression");
-
-	BOOL __block error = NO;
-	BOOL success = [testExpression parseSourceString:sourceString
-										  errorBlock:^(NSString *message, NSUInteger lineNumber) {
-											  NSLog(@"error in line %lu: %@", (unsigned long)lineNumber, message);
-											  error = YES;
-										  }];
-
-	if (success)
-	{
-		STAssertFalse(error, @"error while parsing");
-		STAssertNotNil(testExpression.rootNode, @"no root node");
-		STAssertTrue([testExpression.rootNode isKindOfClass:[NRXBlockNode class]], @"bad root node");
-	}
-
-	_testResult = [NSString stringWithFormat:@"%@", [testExpression evaluate]];
-
-	return success;
+	_testResult = [NSString stringWithFormat:@"%@", [interpreter runWithRootNode:rootNode]];
+	return YES;
 }
 
 #define evaluate(string) STAssertTrue([self parse:string], @"parser error");

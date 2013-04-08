@@ -8,6 +8,5 @@
 #import "NRXTypes.h"
 #import "NRXError.h"
 #import "NRXInterpreter.h"
-#import "NRXParser.h"
 #import "NRXStatementNode.h"
 #import "NRXExpressionNode.h"
