@@ -26,6 +26,9 @@
 - (id <NRXValue>)nrx_division:(id <NRXValue>)argument;
 - (id <NRXValue>)nrx_modulus:(id <NRXValue>)argument;
 
+- (id <NRXValue>)nrx_valueForProperty:(NSString *)name;
+- (id <NRXValue>)nrx_setValue:(id <NRXValue>)value forProperty:(NSString *)name;
+
 - (id <NRXValue>)nrx_subscript:(id <NRXValue>)argument;
 
 - (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error;

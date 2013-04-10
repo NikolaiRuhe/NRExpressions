@@ -186,6 +186,11 @@
 #pragma clang diagnostic pop
 	}
 
+	if ([object respondsToSelector:@selector(nrx_setValue:forProperty:)])
+	{
+		return [object nrx_setValue:value forProperty:self.propertyName];
+	}
+
 	return [NRXLookupError errorWithFormat:@"can not set '%@' on object of type %@", self.propertyName, [object nrx_typeString]];
 }
 
