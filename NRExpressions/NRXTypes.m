@@ -42,6 +42,13 @@
 	return @"Null";
 }
 
+- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error
+{
+	if (argument == [NSNull null])
+		return NSOrderedSame;
+	return NSOrderedAscending;
+}
+
 @end
 
 
