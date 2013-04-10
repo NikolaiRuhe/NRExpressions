@@ -26,6 +26,11 @@
 	return [[self class] nrx_typeString];
 }
 
+- (id <NRXValue>)nrx_promoteToValue
+{
+	return (id <NRXValue>)self;
+}
+
 @end
 
 
@@ -283,7 +288,7 @@
 	return value ? [self yes] : [self no];
 }
 
-- (BOOL)boolValue
+- (BOOL)booleanValue
 {
 	return self == [[self class] yes];
 }

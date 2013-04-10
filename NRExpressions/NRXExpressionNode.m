@@ -73,7 +73,7 @@
 	NSMutableDictionary *resultDictionary = [NSMutableDictionary dictionary];
 	for (NSArray *keyValuePair in (NSArray *)(self.value))
 	{
-		EVALUATE_VALUE(key, keyValuePair[0]);
+		EVALUATE_VALUE(key, keyValuePair[0], NO);
 		if (! [key isKindOfClass:[NSString class]])
 			return [NRXArgumentError errorWithFormat:@"Dictionary literal: key not a String: %@", key];
 
@@ -251,7 +251,10 @@
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(subscriptable, self.subscriptableExpression);
-	EVALUATE_VALUE(subscript, self.subscriptExpression);
+	EVALUATE_VALUE(subscript, self.subscriptExpression, NO);
+
+	if (subscriptable == nil || subscriptable == [NSNull null])
+		return nil;
 
 	if ([subscriptable respondsToSelector:@selector(nrx_subscript:)])
 		return [subscriptable nrx_subscript:subscript];
@@ -286,6 +289,9 @@
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_EXPRESSION(object, self.object);
+
+	if (object == nil || object == [NSNull null])
+		return nil;
 
 	if ([object respondsToSelector:_selector])
 	{
@@ -341,7 +347,7 @@
 @implementation NRXNegationNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(argument, self.argument);
+	EVALUATE_VALUE(argument, self.argument, YES);
 	if ([argument respondsToSelector:@selector(nrx_negation)])
 		return [argument nrx_negation];
 	return [NRXArgumentError errorWithFormat:@"negation not defined"];
@@ -354,8 +360,8 @@
 @implementation NRXAdditionNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  YES);
+	EVALUATE_VALUE(right, self.right, YES);
 
 	if ([left respondsToSelector:@selector(nrx_addition:)])
 		return [left nrx_addition:right];
@@ -367,8 +373,8 @@
 @implementation NRXSubtractionNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  YES);
+	EVALUATE_VALUE(right, self.right, YES);
 
 	if ([left respondsToSelector:@selector(nrx_subtraction:)])
 		return [left nrx_subtraction:right];
@@ -380,8 +386,8 @@
 @implementation NRXMultiplicationNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  YES);
+	EVALUATE_VALUE(right, self.right, YES);
 
 	if ([left respondsToSelector:@selector(nrx_multiplication:)])
 		return [left nrx_multiplication:right];
@@ -393,8 +399,8 @@
 @implementation NRXDivisionNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  YES);
+	EVALUATE_VALUE(right, self.right, YES);
 
 	if ([left respondsToSelector:@selector(nrx_division:)])
 		return [left nrx_division:right];
@@ -406,8 +412,8 @@
 @implementation NRXModulusNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  YES);
+	EVALUATE_VALUE(right, self.right, YES);
 
 	if ([left respondsToSelector:@selector(nrx_modulus:)])
 		return [left nrx_modulus:right];
@@ -419,8 +425,8 @@
 @implementation NRXLessThanNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  NO);
+	EVALUATE_VALUE(right, self.right, NO);
 
 	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
 		return [NRXArgumentError errorWithFormat:@"'<' operator: bad operands"];
@@ -436,8 +442,8 @@
 @implementation NRXGreaterThanNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  NO);
+	EVALUATE_VALUE(right, self.right, NO);
 
 	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
 		return [NRXArgumentError errorWithFormat:@"'>' operator: bad operands"];
@@ -453,8 +459,8 @@
 @implementation NRXGreaterOrEqualNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  NO);
+	EVALUATE_VALUE(right, self.right, NO);
 
 	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
 		return [NRXArgumentError errorWithFormat:@"'>=' operator: bad operands"];
@@ -470,11 +476,11 @@
 @implementation NRXLessOrEqualNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  NO);
+	EVALUATE_VALUE(right, self.right, NO);
 
 	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
-		return [NRXArgumentError errorWithFormat:@"'>=' operator: bad operands"];
+		return [NRXArgumentError errorWithFormat:@"'<=' operator: bad operands"];
 
 	NRXError *error;
 	NSComparisonResult result = [left nrx_compare:right error:&error];
@@ -487,11 +493,11 @@
 @implementation NRXNotEqualNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  NO);
+	EVALUATE_VALUE(right, self.right, NO);
 
 	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
-		return [NRXArgumentError errorWithFormat:@"'>=' operator: bad operands"];
+		return [NRXArgumentError errorWithFormat:@"'!=' operator: bad operands"];
 
 	NRXError *error;
 	NSComparisonResult result = [left nrx_compare:right error:&error];
@@ -504,11 +510,11 @@
 @implementation NRXEqualNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(left,  self.left);
-	EVALUATE_VALUE(right, self.right);
+	EVALUATE_VALUE(left,  self.left,  NO);
+	EVALUATE_VALUE(right, self.right, NO);
 
 	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
-		return [NRXArgumentError errorWithFormat:@"'>=' operator: bad operands"];
+		return [NRXArgumentError errorWithFormat:@"'=' operator: bad operands"];
 
 	NRXError *error;
 	NSComparisonResult result = [left nrx_compare:right error:&error];

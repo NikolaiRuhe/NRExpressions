@@ -65,7 +65,7 @@
 + (NRXBoolean *)yes;
 + (NRXBoolean *)no;
 + (NRXBoolean *)booleanWithBool:(BOOL)value;
-- (BOOL)boolValue;
+- (BOOL)booleanValue;
 @end
 
 
@@ -93,32 +93,38 @@
 
 
 
-#define EVALUATE_EXPRESSION(var, node) \
-id <NRXValue> var = [(node) evaluate:interpreter]; \
-assert(! [var isKindOfClass:[NRXReturnResult class]]); \
-if ([var isKindOfClass:[NRXInterruptExecutionResult class]]) \
+#define EVALUATE_EXPRESSION(var, node)                        \
+id <NRXValue> var = [(node) evaluate:interpreter];            \
+assert(! [var isKindOfClass:[NRXReturnResult class]]);        \
+if ([var isKindOfClass:[NRXInterruptExecutionResult class]])  \
 	return var;
 
-#define EVALUATE_VALUE(var, node) \
-id <NRXValue> var = [(node) evaluate:interpreter]; \
-if ([var isKindOfClass:[NRXInterruptExecutionResult class]]) \
-	return var; \
-if ([var respondsToSelector:@selector(nrx_promoteToValue)]) \
-	var = [var nrx_promoteToValue];
+#define EVALUATE_VALUE(var, node, returnNilValue)             \
+id <NRXValue> var = [(node) evaluate:interpreter];            \
+if ([var isKindOfClass:[NRXInterruptExecutionResult class]])  \
+	return var;                                               \
+var = [var nrx_promoteToValue];                               \
+if ((returnNilValue) && (var == nil || var == [NSNull null])) \
+	return nil;                                               \
+if (var == nil)                                               \
+	var = [NSNull null];
 
-
-#define EVALUATE_BOOL_EXPRESSION(var, node) \
-BOOL var; \
-{ \
-	EVALUATE_VALUE(value, (node)) \
-	if (! [value isKindOfClass:[NRXBoolean class]]) \
-		return [NRXTypeError errorWithFormat:@"type error: boolean expression expected, got %@", [value nrx_typeString]]; \
-	var = [(id)value boolValue]; \
+#define EVALUATE_BOOL_EXPRESSION(var, node)                   \
+BOOL var;                                                     \
+{                                                             \
+	EVALUATE_VALUE(value, (node), NO)                         \
+	if (! [value isKindOfClass:[NRXBoolean class]]) {         \
+		if (value != [NSNull null])                           \
+			return [NRXTypeError errorWithFormat:@"type error: boolean expression expected, got %@", [value nrx_typeString]]; \
+        var = NO;                                             \
+    } else {                                                  \
+		var = [(id)value booleanValue];                       \
+	}                                                         \
 }
 
-#define EVALUATE_STATEMENT(node) \
-{ \
+#define EVALUATE_STATEMENT(node)                              \
+{                                                             \
 	id <NRXValue> evaluated_value = [(node) evaluate:interpreter]; \
 	if ([evaluated_value isKindOfClass:[NRXInterruptExecutionResult class]]) \
-		return evaluated_value; \
+		return evaluated_value;                               \
 }

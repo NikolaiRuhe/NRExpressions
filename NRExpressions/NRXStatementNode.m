@@ -278,7 +278,7 @@
 	// restore scope
 	[interpreter popScope];
 
-	// return errors
+	// return results of return statements
 	if ([result isKindOfClass:[NRXReturnResult class]])
 		return ((NRXReturnResult *)result).value;
 
@@ -488,7 +488,7 @@
 
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	EVALUATE_VALUE(list, self.list);
+	EVALUATE_VALUE(list, self.list, YES);
 	if (! [list isKindOfClass:[NSArray class]])
 		return [NRXTypeError errorWithFormat:@"type error: List expected, got %@", [list nrx_typeString]];
 
