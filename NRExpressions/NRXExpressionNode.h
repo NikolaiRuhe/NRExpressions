@@ -19,10 +19,6 @@
 - (id)initWithValue:(id <NRXValue>)value;
 @end
 
-@interface NRXNumberLiteralNode     : NRXLiteralNode @end
-@interface NRXBoolLiteralNode       : NRXLiteralNode @end
-@interface NRXNullLiteralNode       : NRXLiteralNode @end
-@interface NRXStringLiteralNode     : NRXLiteralNode @end
 @interface NRXListLiteralNode       : NRXLiteralNode @end
 @interface NRXDictionaryLiteralNode : NRXLiteralNode @end
 

@@ -92,7 +92,7 @@ block:
 statement:
     ';'                                      { $$ = push([[NRXNoOperationNode alloc] init]); }
   | block                                    { $$ = $1; }
-  | PRINT ';'                                { $$ = push([[NRXPrintNode alloc] initWithExpression:[[NRXStringLiteralNode alloc] initWithValue:[NSString string]]]); }
+  | PRINT ';'                                { $$ = push([[NRXPrintNode alloc] initWithExpression:[[NRXLiteralNode alloc] initWithValue:[NSString string]]]); }
   | PRINT expr ';'                           { $$ = push([[NRXPrintNode alloc] initWithExpression:pop($2)]); }
   | ASSERT expr ';'                          { $$ = push([[NRXAssertNode alloc] initWithExpression:pop($2)]); }
   | CONTINUE ';'                             { $$ = push([[NRXContinueNode alloc] init]); }
@@ -166,12 +166,12 @@ expr:
   ;
 
 literal:
-    INTEGER                                  { $$ = push([[NRXNumberLiteralNode alloc] initWithValue:pop($1)]); }
-  | FLOAT                                    { $$ = push([[NRXNumberLiteralNode alloc] initWithValue:pop($1)]); }
-  | BOOLTOKEN                                { $$ = push([[NRXNumberLiteralNode alloc] initWithValue:pop($1)]); }
-  | STRING                                   { $$ = push([[NRXStringLiteralNode alloc] initWithValue:pop($1)]); }
-  | NULLTOKEN                                { $$ = push([[NRXNullLiteralNode   alloc] initWithValue:pop($1)]); }
-  | '[' exprlist ']'                         { $$ = push([[NRXListLiteralNode   alloc] initWithValue:pop($2)]); }
+    INTEGER                                  { $$ = push([[NRXLiteralNode alloc] initWithValue:pop($1)]); }
+  | FLOAT                                    { $$ = push([[NRXLiteralNode alloc] initWithValue:pop($1)]); }
+  | BOOLTOKEN                                { $$ = push([[NRXLiteralNode alloc] initWithValue:pop($1)]); }
+  | STRING                                   { $$ = push([[NRXLiteralNode alloc] initWithValue:pop($1)]); }
+  | NULLTOKEN                                { $$ = push([[NRXLiteralNode alloc] initWithValue:pop($1)]); }
+  | '[' exprlist ']'                         { $$ = push([[NRXListLiteralNode alloc] initWithValue:pop($2)]); }
   | '[' keyvaluelist ']'                     { $$ = push([[NRXDictionaryLiteralNode alloc] initWithValue:pop($2)]); }
   ;
 

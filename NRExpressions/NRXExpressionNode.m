@@ -38,10 +38,6 @@
 
 @end
 
-@implementation NRXNumberLiteralNode @end
-@implementation NRXBoolLiteralNode   @end
-@implementation NRXNullLiteralNode   @end
-@implementation NRXStringLiteralNode @end
 
 @implementation NRXListLiteralNode
 
