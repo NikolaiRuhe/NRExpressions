@@ -40,7 +40,7 @@
 	if (_stack == nil)
 	{
 		_stack = [[NSMutableArray alloc] init];
-		[self pushScope];
+		[self pushEmptyScope];
 	}
 	return _stack;
 }
@@ -116,13 +116,23 @@
 		NSLog(@"%@", value);
 }
 
-- (BOOL)pushScope
+- (BOOL)pushScope:(NSMutableDictionary *)scope
 {
 	NSMutableArray *stack = self.stack;
 	if (self.maxCallDepth != 0 && [stack count] > self.maxCallDepth)
 		return NO;
-	[self.stack addObject:[NSMutableDictionary dictionary]];
+	[self.stack addObject:scope];
 	return YES;
+}
+
+- (BOOL)pushScope
+{
+	return [self pushScope:[NSMutableDictionary dictionaryWithDictionary:[self currentScope]]];
+}
+
+- (BOOL)pushEmptyScope
+{
+	return [self pushScope:[NSMutableDictionary dictionary]];
 }
 
 - (void)popScope

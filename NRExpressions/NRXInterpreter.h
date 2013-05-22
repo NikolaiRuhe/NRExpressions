@@ -19,6 +19,7 @@
 typedef void (^NRXPrintBlock)(id <NRXValue> value);
 typedef void (^NRXErrorBlock)(NSString *message, NSUInteger lineNumber);
 
+
 @interface NRXInterpreter : NSObject
 
 @property (nonatomic, weak) id <NRXInterpreterDelegate> delegate;
@@ -37,6 +38,7 @@ typedef void (^NRXErrorBlock)(NSString *message, NSUInteger lineNumber);
 - (id <NRXValue>)lookupToken:(NSString *)token;
 
 - (BOOL)pushScope;
+- (BOOL)pushEmptyScope;
 - (void)popScope;
 
 - (void)print:(id <NRXValue>)value;

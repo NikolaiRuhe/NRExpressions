@@ -61,10 +61,13 @@ static void *parseSymbol(const char* str)
 %%
 
 "&&"            RETURN_TOKEN(AND);
+"and"           RETURN_TOKEN(AND);
 "||"            RETURN_TOKEN(OR);
+"or"            RETURN_TOKEN(OR);
 ">="            RETURN_TOKEN(GE);
 "<="            RETURN_TOKEN(LE);
 "=="            RETURN_TOKEN(EQ);
+"="             RETURN_TOKEN(EQ);
 "!="            RETURN_TOKEN(NE);
 ":="            RETURN_TOKEN(ASSIGNMENT);
 "while"         RETURN_TOKEN(WHILE);
@@ -84,7 +87,7 @@ static void *parseSymbol(const char* str)
 "error"         RETURN_TOKEN(ERROR);
 "return"        RETURN_TOKEN(RETURN);
 
-[$]+[_a-zA-Z][_a-zA-Z0-9]* {
+\$\$?[_a-zA-Z][_a-zA-Z0-9]* {
                 yylval->node = parseSymbol(yytext);
                 RETURN_TOKEN(ID_LOOKUP);
             }

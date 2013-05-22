@@ -258,7 +258,7 @@
 - (id <NRXValue>)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
 {
 	// create a function local scope
-	if (! [interpreter pushScope])
+	if (! [interpreter pushEmptyScope])
 		return [NRXInterpreterError errorWithFormat:@"call stack exceeded"];
 	
 	// check argument count
@@ -372,7 +372,7 @@
 - (id <NRXValue>)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
 {
 	// create a function local scope
-	if (! [interpreter pushScope])
+	if (! [interpreter pushEmptyScope])
 		return [NRXInterpreterError errorWithFormat:@"call stack exceeded"];
 
 	// call delegate
