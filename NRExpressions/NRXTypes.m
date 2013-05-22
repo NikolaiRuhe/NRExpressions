@@ -42,11 +42,12 @@
 	return @"Null";
 }
 
-- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error
+- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument
 {
-	if (argument == [NSNull null])
-		return NSOrderedSame;
-	return NSOrderedAscending;
+	if (argument != [NSNull null])
+		return NRXUnrelated;
+
+	return NRXOrderedSame;
 }
 
 @end
@@ -126,19 +127,12 @@
 	return [NRXArgumentError errorWithFormat:@"operand mismatch in addition"];
 }
 
-- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error
+- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument
 {
-	if (! [argument isKindOfClass:[self class]]) {
-		if (error != NULL) {
-			*error = [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
-			return NSOrderedSame;
-		}
-	}
+	if (! [argument isKindOfClass:[NSString class]])
+		return NRXUnrelated;
 
-	if (error != NULL)
-		*error = nil;
-
-	return [self compare:(id)argument];
+	return (NRXComparisonResult)[self compare:(NSString *)argument];
 }
 
 @end
@@ -151,19 +145,12 @@
 	return @"Date";
 }
 
-- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error
+- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument
 {
-	if (! [argument isKindOfClass:[self class]]) {
-		if (error != NULL) {
-			*error = [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
-			return NSOrderedSame;
-		}
-	}
+	if (! [argument isKindOfClass:[NSDate class]])
+		return NRXUnrelated;
 
-	if (error != NULL)
-		*error = nil;
-
-	return [self compare:(id)argument];
+	return (NRXComparisonResult)[self compare:(NSDate *)argument];
 }
 
 @end
@@ -247,19 +234,12 @@
 	return [NSDecimalNumber decimalNumberWithDecimal:result];
 }
 
-- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error
+- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument
 {
-	if (! [argument isKindOfClass:[NSDecimalNumber class]]) {
-		if (error != NULL) {
-			*error = [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
-			return NSOrderedSame;
-		}
-	}
+	if (! [argument isKindOfClass:[NSDecimalNumber class]])
+		return NRXUnrelated;
 
-	if (error != NULL)
-		*error = nil;
-
-	return [self compare:(NSDecimalNumber *)argument];
+	return (NRXComparisonResult)[self compare:(NSDecimalNumber *)argument];
 }
 
 @end

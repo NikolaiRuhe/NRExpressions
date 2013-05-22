@@ -429,14 +429,13 @@
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
 
-	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+	if (! [left respondsToSelector:@selector(nrx_compare:)])
 		return [NRXArgumentError errorWithFormat:@"'<' operator: bad operands"];
 
-	NRXError *error;
-	NSComparisonResult result = [left nrx_compare:right error:&error];
-	if (error != nil)
-		return error;
-	return [NRXBoolean booleanWithBool:result == NSOrderedAscending];
+	NRXComparisonResult result = [left nrx_compare:right];
+	if (result == NRXUnrelated)
+		return [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
+	return [NRXBoolean booleanWithBool:result == NRXOrderedAscending];
 }
 @end
 
@@ -446,14 +445,13 @@
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
 
-	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+	if (! [left respondsToSelector:@selector(nrx_compare:)])
 		return [NRXArgumentError errorWithFormat:@"'>' operator: bad operands"];
 
-	NRXError *error;
-	NSComparisonResult result = [left nrx_compare:right error:&error];
-	if (error != nil)
-		return error;
-	return [NRXBoolean booleanWithBool:result == NSOrderedDescending];
+	NRXComparisonResult result = [left nrx_compare:right];
+	if (result == NRXUnrelated)
+		return [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
+	return [NRXBoolean booleanWithBool:result == NRXOrderedDescending];
 }
 @end
 
@@ -463,14 +461,13 @@
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
 
-	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+	if (! [left respondsToSelector:@selector(nrx_compare:)])
 		return [NRXArgumentError errorWithFormat:@"'>=' operator: bad operands"];
 
-	NRXError *error;
-	NSComparisonResult result = [left nrx_compare:right error:&error];
-	if (error != nil)
-		return error;
-	return [NRXBoolean booleanWithBool:result != NSOrderedAscending];
+	NRXComparisonResult result = [left nrx_compare:right];
+	if (result == NRXUnrelated)
+		return [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
+	return [NRXBoolean booleanWithBool:result != NRXOrderedAscending];
 }
 @end
 
@@ -480,14 +477,13 @@
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
 
-	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+	if (! [left respondsToSelector:@selector(nrx_compare:)])
 		return [NRXArgumentError errorWithFormat:@"'<=' operator: bad operands"];
 
-	NRXError *error;
-	NSComparisonResult result = [left nrx_compare:right error:&error];
-	if (error != nil)
-		return error;
-	return [NRXBoolean booleanWithBool:result != NSOrderedDescending];
+	NRXComparisonResult result = [left nrx_compare:right];
+	if (result == NRXUnrelated)
+		return [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
+	return [NRXBoolean booleanWithBool:result != NRXOrderedDescending];
 }
 @end
 
@@ -497,14 +493,11 @@
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
 
-	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+	if (! [left respondsToSelector:@selector(nrx_compare:)])
 		return [NRXArgumentError errorWithFormat:@"'!=' operator: bad operands"];
 
-	NRXError *error;
-	NSComparisonResult result = [left nrx_compare:right error:&error];
-	if (error != nil)
-		return error;
-	return [NRXBoolean booleanWithBool:result != NSOrderedSame];
+	NRXComparisonResult result = [left nrx_compare:right];
+	return [NRXBoolean booleanWithBool:result != NRXOrderedSame];
 }
 @end
 
@@ -514,14 +507,11 @@
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
 
-	if (! [left respondsToSelector:@selector(nrx_compare:error:)])
+	if (! [left respondsToSelector:@selector(nrx_compare:)])
 		return [NRXArgumentError errorWithFormat:@"'=' operator: bad operands"];
 
-	NRXError *error;
-	NSComparisonResult result = [left nrx_compare:right error:&error];
-	if (error != nil)
-		return error;
-	return [NRXBoolean booleanWithBool:result == NSOrderedSame];
+	NRXComparisonResult result = [left nrx_compare:right];
+	return [NRXBoolean booleanWithBool:result == NRXOrderedSame];
 }
 @end
 

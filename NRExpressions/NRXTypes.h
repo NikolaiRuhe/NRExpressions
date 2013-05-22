@@ -8,6 +8,13 @@
 #import <Foundation/Foundation.h>
 @class NRXInterpreter, NRXError;
 
+typedef enum NRXComparisonResult : NSInteger {
+	NRXOrderedAscending = NSOrderedAscending,
+	NRXOrderedSame = NSOrderedSame,
+	NRXOrderedDescending = NSOrderedDescending,
+	NRXUnrelated = 2,
+} NRXComparisonResult;
+
 
 // Common value functionality. This can be used to bridge to Objective-C objects.
 @protocol NRXValue <NSObject>
@@ -31,7 +38,7 @@
 
 - (id <NRXValue>)nrx_subscript:(id <NRXValue>)argument;
 
-- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error;
+- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument;
 
 @end
 
@@ -61,7 +68,7 @@
 - (id <NRXValue>)nrx_multiplication:(id <NRXValue>)argument;
 - (id <NRXValue>)nrx_division:(id <NRXValue>)argument;
 - (id <NRXValue>)nrx_modulus:(id <NRXValue>)argument;
-- (NSComparisonResult)nrx_compare:(id <NRXValue>)argument error:(NRXError * __autoreleasing *)error;
+- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument;
 @end
 
 @interface NRXBoolean : NSObject <NRXValue>
