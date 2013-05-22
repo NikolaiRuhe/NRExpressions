@@ -130,6 +130,10 @@
 	expectOutput(@"2\n");
 	expectResult(@"(null)");
 
+	evaluate(@"print ([1, 2, 3] where x : x % 2 == 0).count;");
+	expectOutput(@"1\n");
+	expectResult(@"(null)");
+
 	evaluate(@"print ['1' : 1, '2' : 2, '3' : 3]['2'];");
 	expectOutput(@"2\n");
 	expectResult(@"(null)");

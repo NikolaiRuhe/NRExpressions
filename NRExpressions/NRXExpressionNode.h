@@ -86,6 +86,13 @@
 
 
 
+@interface NRXWhereNode : NRXExpressionNode
+@property (nonatomic, readonly, retain) NRXExpressionNode *list;
+@property (nonatomic, readonly, copy) NSString *variable;
+@property (nonatomic, readonly, retain) NRXExpressionNode *condition;
+- (id)initWithList:(NRXExpressionNode *)list variable:(NRXExpressionNode *)variable condition:(NRXExpressionNode *)condition;
+@end
+
 @interface NRXLogicalNegationNode : NRXUnaryOperationNode @end
 @interface NRXNegationNode        : NRXUnaryOperationNode @end
 

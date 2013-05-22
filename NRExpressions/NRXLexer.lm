@@ -68,6 +68,7 @@ static void *parseSymbol(const char* str)
 "<="            RETURN_TOKEN(LE);
 "=="            RETURN_TOKEN(EQ);
 "="             RETURN_TOKEN(EQ);
+"where"         RETURN_TOKEN(WHERE);
 "!="            RETURN_TOKEN(NE);
 ":="            RETURN_TOKEN(ASSIGNMENT);
 "while"         RETURN_TOKEN(WHILE);

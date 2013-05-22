@@ -343,6 +343,47 @@
 
 
 
+@implementation NRXWhereNode
+
+@synthesize list = _list;
+@synthesize variable = _variable;
+@synthesize condition = _condition;
+
+- (id)initWithList:(NRXExpressionNode *)list variable:(NSString *)variable condition:(NRXExpressionNode *)condition
+{
+	self = [self init];
+	if (self != nil)
+	{
+		_list = list;
+		_variable = [variable copy];
+		_condition = condition;
+	}
+	return self;
+}
+
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
+{
+	EVALUATE_VALUE(list, self.list, YES);
+	if (! [list isKindOfClass:[NSArray class]])
+		return [NRXTypeError errorWithFormat:@"'where' operator: not a list, got %@", [list nrx_typeString]];
+
+	NSMutableArray *result = [NSMutableArray arrayWithCapacity:[((NSArray *)list) count]];
+	for (id <NRXValue> element in (NSArray *)list) {
+		[interpreter pushScope];
+		[interpreter assignValue:element toSymbol:self.variable];
+
+		EVALUATE_BOOL_EXPRESSION(condition, self.condition);
+
+		if (condition)
+			[result addObject:element];
+
+		[interpreter popScope];
+	}
+
+	return result;
+}
+@end
+
 
 
 @implementation NRXNegationNode
