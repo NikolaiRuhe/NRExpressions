@@ -20,6 +20,8 @@ NRXBlockNode *NRXParserParseString(NSString *sourceString, NRXParserErrorBlock e
 
 #include "y.tab.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpadded"
 typedef struct {
 	const char *sourceString;
 	BOOL error;
@@ -28,6 +30,8 @@ typedef struct {
 	void *scanner;
 	void *buffer;
 } NRXParser;
+#pragma clang diagnostic pop
+
 
 int NRX_lex(YYSTYPE *lvalp, YYLTYPE* llocp, void *scanner);
 
