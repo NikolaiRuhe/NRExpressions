@@ -155,7 +155,7 @@
 @synthesize propertyName = _propertyName;
 @synthesize expression = _expression;
 
-- (id)initWithObject:(NRXExpressionNode *)object propertyName:(NSString *)propertyName expression:(NRXExpressionNode *)expression;
+- (id)initWithObject:(NRXExpressionNode *)object propertyName:(NSString *)propertyName expression:(NRXExpressionNode *)expression
 {
 	self = [self init];
 	if (self != nil)
@@ -435,7 +435,7 @@
 @synthesize condition = _condition;
 @synthesize statement = _statement;
 
-- (id)initWithCondition:(NRXExpressionNode *)condition statement:(NRXStatementNode *)statement;
+- (id)initWithCondition:(NRXExpressionNode *)condition statement:(NRXStatementNode *)statement
 {
 	self = [self init];
 	if (self != nil)
@@ -479,7 +479,7 @@
 @synthesize list = _list;
 @synthesize statement = _statement;
 
-- (id)initWithVariable:(NSString *)variable list:(NRXExpressionNode *)list statement:(NRXStatementNode *)statement;
+- (id)initWithVariable:(NSString *)variable list:(NRXExpressionNode *)list statement:(NRXStatementNode *)statement
 {
 	self = [self init];
 	if (self != nil)
@@ -525,7 +525,7 @@
 @synthesize symbol = _symbol;
 @synthesize catchStatement = _catchStatement;
 
-- (id)initWithTryStatement:(NRXStatementNode *)tryStatement symbol:(NSString *)symbol catchStatement:(NRXStatementNode *)catchStatement;
+- (id)initWithTryStatement:(NRXStatementNode *)tryStatement symbol:(NSString *)symbol catchStatement:(NRXStatementNode *)catchStatement
 {
 	self = [self init];
 	if (self != nil)

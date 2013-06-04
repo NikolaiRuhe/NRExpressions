@@ -27,7 +27,10 @@
 {
 	va_list arguments;
 	va_start(arguments, format);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
 	NSString *reason = [[NSString alloc] initWithFormat:format arguments:arguments];
+#pragma clang diagnostic pop
 	va_end(arguments);
 	return [[self alloc] initWithReason:reason];
 }
