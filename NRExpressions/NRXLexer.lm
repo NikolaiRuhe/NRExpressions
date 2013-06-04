@@ -11,6 +11,8 @@
 #import "NRXTypes.h"
 #import "xlocale.h"
 
+#pragma clang diagnostic ignored "-Wdocumentation"
+
 #define YY_EXTRA_TYPE  NRXParser*
 //#define YY_USER_ACTION yylloc->first_line = yylineno;
 

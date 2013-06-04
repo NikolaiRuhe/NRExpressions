@@ -17,6 +17,8 @@
 
 #define scanner parser->scanner
 
+#pragma clang diagnostic ignored "-Warray-bounds-pointer-arithmetic"
+
 static inline id pop(void *object) { return (__bridge_transfer id)(object); }
 static inline void *push(id object)
 {
