@@ -13,6 +13,7 @@
 
 #pragma clang diagnostic ignored "-Wdocumentation"
 #pragma clang diagnostic ignored "-Wpadded"
+#pragma clang diagnostic ignored "-Wunreachable-code"
 
 #define YY_EXTRA_TYPE  NRXParser*
 //#define YY_USER_ACTION yylloc->first_line = yylineno;
