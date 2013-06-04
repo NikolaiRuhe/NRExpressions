@@ -94,7 +94,7 @@ typedef id <NRXValue>(^NRXBlockFunctionBlock)(NSArray *arguments);
 @property (nonatomic, readonly, retain) NRXExpressionNode *condition;
 @property (nonatomic, readonly, retain) NRXStatementNode *statement;
 @property (nonatomic, readonly, retain) NRXStatementNode *elseStatement;
-- (id)initWithCondition:(NRXExpressionNode *)condition statement:(NRXStatementNode *)statement elseStatement:(NRXStatementNode *)statement;
+- (id)initWithCondition:(NRXExpressionNode *)condition statement:(NRXStatementNode *)statement elseStatement:(NRXStatementNode *)elseStatement;
 @end
 
 
