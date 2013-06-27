@@ -277,7 +277,7 @@
 	{
 		_object = object;
 		_propertyName = [propertyName copy];
-		_selector = NSSelectorFromString([NSString stringWithFormat:@"nrx_%@", self.propertyName]);
+		_selector = NSSelectorFromString([@"nrx_" stringByAppendingString:self.propertyName]);
 	}
 	return self;
 }
