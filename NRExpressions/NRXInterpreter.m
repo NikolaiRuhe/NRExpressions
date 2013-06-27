@@ -201,4 +201,14 @@
 	return [interpreter runWithRootNode:rootNode];
 }
 
++ (NSDecimalNumber *)decimalNumberFromString:(NSString *)string
+{
+	return NRXDecimalNumberFromString(string);
+}
+
++ (NSString *)stringFromDecimalNumber:(NSDecimalNumber *)number
+{
+	return NRXStringFromDecimalNumber(number);
+}
+
 @end

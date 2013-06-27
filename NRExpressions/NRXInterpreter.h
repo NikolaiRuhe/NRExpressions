@@ -53,4 +53,7 @@ typedef void (^NRXErrorBlock)(NSString *message, NSUInteger lineNumber);
 + (id <NRXValue>)evaluateSourceString:(NSString *)sourceString withErrorBlock:(NRXErrorBlock)errorBlock printBlock:(NRXPrintBlock)printBlock;
 + (id <NRXValue>)evaluateSourceString:(NSString *)sourceString;
 
++ (NSDecimalNumber *)decimalNumberFromString:(NSString *)string;
++ (NSString *)stringFromDecimalNumber:(NSDecimalNumber *)number;
+
 @end

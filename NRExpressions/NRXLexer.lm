@@ -26,7 +26,7 @@ void NRX_set_column(int column_no , void *scanner);
 static void *parseNumber(const char* str)
 {
 	NSString *string = [[NSString alloc] initWithUTF8String:str];
-	return (__bridge_retained void *)[[NSDecimalNumber alloc] initWithString:string];
+	return (__bridge_retained void *)NRXDecimalNumberFromString(string);
 }
 
 static void *parseSymbol(const char* str)

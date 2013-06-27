@@ -47,3 +47,27 @@ int NRX_lex(YYSTYPE *lvalp, YYLTYPE* llocp, void *scanner);
 
 void NRXParserInit(NRXParser *parser);
 void NRXParserCleanup(NRXParser *parser);
+
+static inline NSDecimalNumber *NRXDecimalNumberFromString(NSString *string)
+{
+	if ([string length] == 0)
+		return nil;
+
+	NSScanner *scanner = [[NSScanner alloc] initWithString:string];
+	NSDecimal decimal;
+	BOOL success = [scanner scanDecimal:&decimal];
+
+	if (success && [scanner isAtEnd])
+		return [[NSDecimalNumber alloc] initWithDecimal:decimal];
+
+	return [NSDecimalNumber notANumber];
+}
+
+static inline NSString *NRXStringFromDecimalNumber(NSDecimalNumber *number)
+{
+	if (number == nil)
+		return nil;
+
+	NSDecimal decimal = [number decimalValue];
+	return NSDecimalString(&decimal, nil);
+}
