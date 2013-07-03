@@ -88,22 +88,55 @@
 
 
 @implementation NRXLookupNode
+{
+	NSMutableArray *_tokenPairs;
+}
 
-@synthesize token = _token;
-
-- (id)initWithToken:(NSString *)token
+- (id)initWithSingleLookup:(NSString *)token
 {
 	self = [self init];
 	if (self != nil)
 	{
-		_token = [token copy];
+		_tokenPairs = [[NSMutableArray alloc] init];
+		[self appendLookup:token isMulti:NO];
 	}
 	return self;
 }
 
+- (id)initWithMultiLookup:(NSString *)token
+{
+	self = [self init];
+	if (self != nil)
+	{
+		_tokenPairs = [[NSMutableArray alloc] init];
+		[self appendLookup:token isMulti:YES];
+	}
+	return self;
+}
+
+- (void)appendLookup:(NSString *)token isMulti:(BOOL)isMulti
+{
+	[_tokenPairs addObject:@[@(isMulti), token]];
+}
+
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
-	return [interpreter lookupToken:self.token];
+	return [interpreter lookupNode:self];
+}
+
+- (NSUInteger)tokenCount
+{
+	return [_tokenPairs count];
+}
+
+- (void)enumerateTokens:(void(^)(NSString *token, BOOL isMulti, BOOL *stop))block
+{
+	for (NSArray *tokenPair in _tokenPairs) {
+		BOOL stop = NO;
+		block(tokenPair[1], [tokenPair[0] boolValue], &stop);
+		if (stop)
+			break;
+	}
 }
 
 @end

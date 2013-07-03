@@ -61,7 +61,7 @@ static inline void *push(id object)
 %token <node> SYMBOL
 %token <node> STRING
 %token <node> ASSIGNMENT
-%token <node> ID_LOOKUP
+%token <node> ID_SINGLE_LOOKUP ID_MULTI_LOOKUP
 %token WHILE FOR IN IF PRINT RETURN ASSERT TRY CATCH BREAK CONTINUE ERROR
 %nonassoc IFX
 %nonassoc ELSE
@@ -78,7 +78,7 @@ static inline void *push(id object)
 %nonassoc UNOT
 %left '.' '[' '('
 
-%type <node> statement statements block expr exprlist keyvaluelist literal functionprep
+%type <node> statement statements block expr exprlist keyvaluelist lookup literal functionprep
 
 %%
 
@@ -147,8 +147,8 @@ functionprep:
 
 expr:
     literal                                  { $$ = $1; }
+  | lookup                                   { $$ = $1; }
   | SYMBOL                                   { $$ = push([[NRXSymbolNode alloc] initWithName:pop($1)]); }
-  | ID_LOOKUP                                { $$ = push([[NRXLookupNode alloc] initWithToken:pop($1)]); }
   | '-' expr %prec UMINUS                    { $$ = push([[NRXNegationNode alloc] initWithArgument:pop($2)]); }
   | '!' expr %prec UNOT                      { $$ = push([[NRXLogicalNegationNode alloc] initWithArgument:pop($2)]); }
   | expr '?' expr ':' expr                   { $$ = push([[NRXTernaryConditionNode alloc] initWithCondition:pop($1) positiveExpression:pop($3) negativeExpression:pop($5)]); }
@@ -171,6 +171,12 @@ expr:
   | expr '[' expr ']'                        { $$ = push([[NRXSubscriptNode alloc] initWithSubscriptableExpression:pop($1) subscriptExpression:pop($3)]); }
   | '(' expr ')'                             { $$ = $2; }
   ;
+
+lookup:
+    ID_SINGLE_LOOKUP                         { $$ = push([[NRXLookupNode alloc] initWithSingleLookup:pop($1)]); }
+  | ID_MULTI_LOOKUP                          { $$ = push([[NRXLookupNode alloc] initWithMultiLookup:pop($1)]); }
+  | lookup ID_SINGLE_LOOKUP                  { $$ = $1; [(__bridge NRXLookupNode *)$1 appendLookup:pop($2) isMulti:NO]; }
+  | lookup ID_MULTI_LOOKUP                   { $$ = $1; [(__bridge NRXLookupNode *)$1 appendLookup:pop($2) isMulti:YES]; }
 
 literal:
     INTEGER                                  { $$ = push([[NRXLiteralNode alloc] initWithValue:pop($1)]); }

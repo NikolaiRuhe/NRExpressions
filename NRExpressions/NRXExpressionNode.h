@@ -25,8 +25,11 @@
 
 
 @interface NRXLookupNode : NRXExpressionNode
-@property (nonatomic, readonly, copy) NSString *token;
-- (id)initWithToken:(NSString *)token;
+@property (nonatomic, readonly) NSUInteger tokenCount;
+- (id)initWithSingleLookup:(NSString *)token;
+- (id)initWithMultiLookup:(NSString *)token;
+- (void)appendLookup:(NSString *)token isMulti:(BOOL)isMulti;
+- (void)enumerateTokens:(void(^)(NSString *token, BOOL isMulti, BOOL *stop))block;
 @end
 
 

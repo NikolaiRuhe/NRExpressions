@@ -6,13 +6,13 @@
 //
 
 #import "NRXTypes.h"
-@class NRXBlockNode;
+@class NRXBlockNode, NRXLookupNode;
 
 
 @protocol NRXInterpreterDelegate <NSObject>
 @optional
 - (id <NRXValue>)resolveSymbol:(NSString *)symbol;
-- (id <NRXValue>)lookupToken:(NSString *)token;
+- (id <NRXValue>)lookupNode:(NRXLookupNode *)node;
 @end
 
 
@@ -35,7 +35,7 @@ typedef void (^NRXErrorBlock)(NSString *message, NSUInteger lineNumber);
 - (void)assignValue:(id <NRXValue>)value toSymbol:(NSString *)symbol;
 - (void)assignValue:(id <NRXValue>)value toGlobalSymbol:(NSString *)symbol;
 
-- (id <NRXValue>)lookupToken:(NSString *)token;
+- (id <NRXValue>)lookupNode:(NRXLookupNode *)lookupNode;
 
 - (BOOL)pushScope;
 - (BOOL)pushEmptyScope;

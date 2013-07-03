@@ -57,10 +57,10 @@
 	return _globalScope;
 }
 
-- (id <NRXValue>)lookupToken:(NSString *)token
+- (id <NRXValue>)lookupNode:(NRXLookupNode *)lookupNode
 {
-	if ([self.delegate respondsToSelector:@selector(lookupToken:)])
-		return [self.delegate lookupToken:token];
+	if ([self.delegate respondsToSelector:@selector(lookupNode:)])
+		return [self.delegate lookupNode:lookupNode];
 	return [NRXInterpreterError errorWithFormat:@"token lookup not supported"];
 }
 

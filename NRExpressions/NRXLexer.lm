@@ -93,9 +93,14 @@ static void *parseSymbol(const char* str)
 "error"         RETURN_TOKEN(ERROR);
 "return"        RETURN_TOKEN(RETURN);
 
-\$\$?[_a-zA-Z][_a-zA-Z0-9]* {
-                yylval->node = parseSymbol(yytext);
-                RETURN_TOKEN(ID_LOOKUP);
+\$\$[_a-zA-Z][_a-zA-Z0-9]* {
+                yylval->node = parseSymbol(yytext + 2);
+                RETURN_TOKEN(ID_MULTI_LOOKUP);
+            }
+
+\$[_a-zA-Z][_a-zA-Z0-9]* {
+                yylval->node = parseSymbol(yytext + 1);
+                RETURN_TOKEN(ID_SINGLE_LOOKUP);
             }
 
 [-()<>=+*/;{}!?:.] {
