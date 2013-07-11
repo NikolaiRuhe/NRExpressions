@@ -120,6 +120,21 @@
 	return [NSDecimalNumber decimalNumberWithMantissa:[self length] exponent:0 isNegative:NO];
 }
 
+- (NSString *)nrx_upper
+{
+	return [self uppercaseString];
+}
+
+- (NSString *)nrx_lower
+{
+	return [self lowercaseString];
+}
+
+- (NSString *)nrx_percentescape
+{
+	return [self stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+}
+
 - (id <NRXValue>)nrx_addition:(id <NRXValue>)argument
 {
 	if ([argument isKindOfClass:[NSString class]])
