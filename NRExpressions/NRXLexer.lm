@@ -34,6 +34,13 @@ static void *parseSymbol(const char* str)
 	return (__bridge_retained void *)[[NSString alloc] initWithUTF8String:str];
 }
 
+static inline void convertDataToString(union YYSTYPE *yylval)
+{
+	NSData *data = (__bridge_transfer NSData *)(yylval->node);
+	NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+	yylval->node = ((__bridge_retained void *) string);
+}
+
 #ifdef DEBUG_LEXER
 #define RETURN_TOKEN(token) \
 	{ \
@@ -133,23 +140,23 @@ static void *parseSymbol(const char* str)
                 RETURN_TOKEN(SYMBOL);
             }
 
-\"                         { BEGIN DOUBLE_QUOTED_STRING; yylval->node = (__bridge_retained void *)[ [NSMutableString alloc] init]; }
-<DOUBLE_QUOTED_STRING>\\n  { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\n"]; }
-<DOUBLE_QUOTED_STRING>\\t  { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\t"]; }
-<DOUBLE_QUOTED_STRING>\\\" { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\""]; }
-<DOUBLE_QUOTED_STRING>\\\\ { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\\"]; }
-<DOUBLE_QUOTED_STRING>\"   { BEGIN 0; RETURN_TOKEN(STRING); }
-<DOUBLE_QUOTED_STRING>\n   { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\n"]; }
-<DOUBLE_QUOTED_STRING>.    { [((__bridge NSMutableString *)(yylval->node)) appendFormat:@"%c", *yytext]; }
+\"                         { BEGIN DOUBLE_QUOTED_STRING; yylval->node = (__bridge_retained void *)[ [NSMutableData alloc] init]; }
+<DOUBLE_QUOTED_STRING>\\n  { [((__bridge NSMutableData *)(yylval->node)) appendBytes:"\n" length:1]; }
+<DOUBLE_QUOTED_STRING>\\t  { [((__bridge NSMutableData *)(yylval->node)) appendBytes:"\t" length:1]; }
+<DOUBLE_QUOTED_STRING>\\\" { [((__bridge NSMutableData *)(yylval->node)) appendBytes:"\"" length:1]; }
+<DOUBLE_QUOTED_STRING>\\\\ { [((__bridge NSMutableData *)(yylval->node)) appendBytes:"\\" length:1]; }
+<DOUBLE_QUOTED_STRING>\"   { BEGIN 0; convertDataToString(yylval); RETURN_TOKEN(STRING); }
+<DOUBLE_QUOTED_STRING>\n   { [((__bridge NSMutableData *)(yylval->node)) appendBytes:"\n" length:1]; }
+<DOUBLE_QUOTED_STRING>.    { [((__bridge NSMutableData *)(yylval->node)) appendBytes:yytext length:1]; }
 
-'                          { BEGIN SINGLE_QUOTED_STRING; yylval->node = (__bridge_retained void *)[ [NSMutableString alloc] init]; }
-<SINGLE_QUOTED_STRING>\\n  { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\n"]; }
-<SINGLE_QUOTED_STRING>\\t  { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\t"]; }
-<SINGLE_QUOTED_STRING>\\'  { [((__bridge NSMutableString *)(yylval->node)) appendString:@"'"]; }
-<SINGLE_QUOTED_STRING>\\\\ { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\\"]; }
-<SINGLE_QUOTED_STRING>'    { BEGIN 0; RETURN_TOKEN(STRING); }
-<SINGLE_QUOTED_STRING>\n   { [((__bridge NSMutableString *)(yylval->node)) appendString:@"\n"]; }
-<SINGLE_QUOTED_STRING>.    { [((__bridge NSMutableString *)(yylval->node)) appendFormat:@"%c", *yytext]; }
+'                          { BEGIN SINGLE_QUOTED_STRING; yylval->node = (__bridge_retained void *)[ [NSMutableData alloc] init]; }
+<SINGLE_QUOTED_STRING>\\n  { [((__bridge NSMutableData *)(yylval->node)) appendBytes:"\n" length:1]; }
+<SINGLE_QUOTED_STRING>\\t  { [((__bridge NSMutableData *)(yylval->node)) appendBytes:"\t" length:1]; }
+<SINGLE_QUOTED_STRING>\\'  { [((__bridge NSMutableData *)(yylval->node)) appendBytes:"'"  length:1]; }
+<SINGLE_QUOTED_STRING>\\\\ { [((__bridge NSMutableData *)(yylval->node)) appendBytes:"\\" length:1]; }
+<SINGLE_QUOTED_STRING>'    { BEGIN 0; convertDataToString(yylval); RETURN_TOKEN(STRING); }
+<SINGLE_QUOTED_STRING>\n   { [((__bridge NSMutableData *)(yylval->node)) appendBytes:"\n" length:1]; }
+<SINGLE_QUOTED_STRING>.    { [((__bridge NSMutableData *)(yylval->node)) appendBytes:yytext length:1]; }
 
 \/\*            { BEGIN INCOMMENT; }
 <INCOMMENT>\*\/ { BEGIN 0; }
