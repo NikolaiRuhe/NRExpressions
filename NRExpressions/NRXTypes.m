@@ -132,7 +132,7 @@
 
 - (NSString *)nrx_percentescape
 {
-	return [self stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	return (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (__bridge CFStringRef)self, NULL, CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"), kCFStringEncodingUTF8);
 }
 
 - (id <NRXValue>)nrx_addition:(id <NRXValue>)argument
