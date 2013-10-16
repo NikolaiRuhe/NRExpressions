@@ -31,6 +31,17 @@
 	return (id <NRXValue>)self;
 }
 
+- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument
+{
+	if (argument == self)
+		return NRXOrderedSame;
+
+	if ([self isEqual:argument])
+		return NRXOrderedSame;
+
+	return NRXUnrelated;
+}
+
 @end
 
 
@@ -40,14 +51,6 @@
 + (NSString *)nrx_typeString
 {
 	return @"Null";
-}
-
-- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument
-{
-	if (argument != [NSNull null])
-		return NRXUnrelated;
-
-	return NRXOrderedSame;
 }
 
 @end

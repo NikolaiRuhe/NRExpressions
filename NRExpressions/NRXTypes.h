@@ -68,7 +68,6 @@ typedef enum NRXComparisonResult : NSInteger {
 - (id <NRXValue>)nrx_multiplication:(id <NRXValue>)argument;
 - (id <NRXValue>)nrx_division:(id <NRXValue>)argument;
 - (id <NRXValue>)nrx_modulus:(id <NRXValue>)argument;
-- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument;
 @end
 
 @interface NRXBoolean : NSObject <NRXValue>

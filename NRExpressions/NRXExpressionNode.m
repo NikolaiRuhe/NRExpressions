@@ -503,9 +503,6 @@
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
 
-	if (! [left respondsToSelector:@selector(nrx_compare:)])
-		return [NRXArgumentError errorWithFormat:@"'<' operator: bad operands"];
-
 	NRXComparisonResult result = [left nrx_compare:right];
 	if (result == NRXUnrelated)
 		return [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
@@ -518,9 +515,6 @@
 {
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
-
-	if (! [left respondsToSelector:@selector(nrx_compare:)])
-		return [NRXArgumentError errorWithFormat:@"'>' operator: bad operands"];
 
 	NRXComparisonResult result = [left nrx_compare:right];
 	if (result == NRXUnrelated)
@@ -535,9 +529,6 @@
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
 
-	if (! [left respondsToSelector:@selector(nrx_compare:)])
-		return [NRXArgumentError errorWithFormat:@"'>=' operator: bad operands"];
-
 	NRXComparisonResult result = [left nrx_compare:right];
 	if (result == NRXUnrelated)
 		return [NRXArgumentError errorWithFormat:@"operand mismatch in comparison"];
@@ -550,9 +541,6 @@
 {
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
-
-	if (! [left respondsToSelector:@selector(nrx_compare:)])
-		return [NRXArgumentError errorWithFormat:@"'<=' operator: bad operands"];
 
 	NRXComparisonResult result = [left nrx_compare:right];
 	if (result == NRXUnrelated)
@@ -567,9 +555,6 @@
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
 
-	if (! [left respondsToSelector:@selector(nrx_compare:)])
-		return [NRXArgumentError errorWithFormat:@"'!=' operator: bad operands"];
-
 	NRXComparisonResult result = [left nrx_compare:right];
 	return [NRXBoolean booleanWithBool:result != NRXOrderedSame];
 }
@@ -580,9 +565,6 @@
 {
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
-
-	if (! [left respondsToSelector:@selector(nrx_compare:)])
-		return [NRXArgumentError errorWithFormat:@"'=' operator: bad operands"];
 
 	NRXComparisonResult result = [left nrx_compare:right];
 	return [NRXBoolean booleanWithBool:result == NRXOrderedSame];
@@ -596,7 +578,7 @@
 	
 	// care for short-circuiting right operand
 	if (! left)
-		return [NRXBoolean booleanWithBool:NO];
+		return [NRXBoolean no];
 	
 	EVALUATE_BOOL_EXPRESSION(right, self.right);
 	return [NRXBoolean booleanWithBool:right];
@@ -610,7 +592,7 @@
 	
 	// care for short-circuiting right operand
 	if (left)
-		return [NRXBoolean booleanWithBool:YES];
+		return [NRXBoolean yes];
 	
 	EVALUATE_BOOL_EXPRESSION(right, self.right);
 	return [NRXBoolean booleanWithBool:right];
