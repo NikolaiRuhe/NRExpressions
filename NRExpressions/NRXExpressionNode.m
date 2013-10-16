@@ -616,6 +616,23 @@
 }
 @end
 
+@implementation NRXListInNode
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
+{
+	EVALUATE_VALUE(left,  self.left,  NO);
+	EVALUATE_VALUE(right, self.right, NO);
+
+	if (! [right isKindOfClass:[NSArray class]])
+		return [NRXTypeError errorWithFormat:@"'in' operator: not a list, got %@", [right nrx_typeString]];
+
+	for (id <NRXValue> element in (NSArray *)right) {
+		if ([element nrx_compare:left] == NRXOrderedSame)
+			return [NRXBoolean yes];
+	}
+	return [NRXBoolean no];
+}
+@end
+
 @implementation NRXLogicalAndNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {

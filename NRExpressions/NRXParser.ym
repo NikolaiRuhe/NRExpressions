@@ -72,7 +72,7 @@ static inline void *push(id object)
 %left OR
 %left AND
 %left GE LE EQ NE '>' '<'
-%left '+' '-'
+%left '+' '-' IN
 %left '*' '/' '%'
 %right '!'
 %nonassoc UMINUS
@@ -162,6 +162,7 @@ expr:
   | expr '%' expr                            { $$ = push([[NRXModulusNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr '<' expr                            { $$ = push([[NRXLessThanNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr '>' expr                            { $$ = push([[NRXGreaterThanNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr IN expr                             { $$ = push([[NRXListInNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr AND expr                            { $$ = push([[NRXLogicalAndNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr OR expr                             { $$ = push([[NRXLogicalOrNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr GE expr                             { $$ = push([[NRXGreaterOrEqualNode alloc] initWithLeft:pop($1) right:pop($3)]); }
