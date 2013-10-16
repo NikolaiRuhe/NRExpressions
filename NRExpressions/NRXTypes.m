@@ -81,7 +81,7 @@
 	return self[idx];
 }
 
-- (id <NRXValue>)nrx_traverseWithBlock:(id <NRXValue>(^)(id <NRXValue> element))block;
+- (id <NRXValue>)nrx_traverseWithBlock:(id <NRXValue>(^)(id <NRXValue> element))block
 {
 	for (id<NRXValue> element in self) {
 		@autoreleasepool {
@@ -120,7 +120,7 @@
 	return result;
 }
 
-- (id <NRXValue>)nrx_traverseWithBlock:(id <NRXValue>(^)(id <NRXValue> element))block;
+- (id <NRXValue>)nrx_traverseWithBlock:(id <NRXValue>(^)(id <NRXValue> element))block
 {
 	for (id<NRXValue> key in self) {
 		@autoreleasepool {

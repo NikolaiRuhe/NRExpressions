@@ -373,7 +373,7 @@
 		// call delegate
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-		id <NRXValue> result = [interpreter.delegate performSelector:_selector withObject:arguments];
+		id <NRXValue> result = [interpreter.delegate performSelector:self->_selector withObject:arguments];
 #pragma clang diagnostic pop
 
 		if ([result isKindOfClass:[NRXReturnResult class]])
