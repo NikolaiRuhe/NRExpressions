@@ -331,16 +331,16 @@
 
 @implementation NRXDelegateCallbackNode
 {
-	NSString *_name;
+	id _target;
 	SEL _selector;
 }
 
-- (id)initWithName:(NSString *)name selector:(SEL)selector
+- (id)initWithTarget:(id)target selector:(SEL)selector
 {
 	self = [self init];
 	if (self != nil)
 	{
-		_name     = [name copy];
+		_target   = target;
 		_selector = selector;
 
 #ifdef DEBUG

@@ -57,8 +57,9 @@
 
 - (id <NRXValue>)lookupNode:(NRXLookupNode *)lookupNode
 {
-	if ([self.delegate respondsToSelector:@selector(lookupNode:)])
-		return [self.delegate lookupNode:lookupNode];
+	id delegate = self.delegate;
+	if ([delegate respondsToSelector:@selector(lookupNode:)])
+		return [delegate lookupNode:lookupNode];
 	return [NRXInterpreterError errorWithFormat:@"token lookup not supported"];
 }
 
@@ -73,15 +74,16 @@
 	if (value != nil)
 		return value;
 
-	if (self.delegate != nil) {
+	id delegate = self.delegate;
+	if (delegate != nil) {
 
 		NSString *selectorString = [NSString stringWithFormat:@"nrx_%@_callWithArguments:", symbol];
 		SEL selector = NSSelectorFromString(selectorString);
-		if ([self.delegate respondsToSelector:selector])
-			return [[NRXDelegateCallbackNode alloc] initWithName:symbol selector:selector];
+		if ([delegate respondsToSelector:selector])
+			return [[NRXDelegateCallbackNode alloc] initWithTarget:delegate selector:selector];
 
-		if ([self.delegate respondsToSelector:@selector(resolveSymbol:)]) {
-			value = [self.delegate resolveSymbol:symbol];
+		if ([delegate respondsToSelector:@selector(resolveSymbol:)]) {
+			value = [delegate resolveSymbol:symbol];
 			if (value != nil)
 				return value;
 		}

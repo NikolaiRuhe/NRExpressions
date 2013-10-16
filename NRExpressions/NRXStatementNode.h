@@ -85,7 +85,7 @@ typedef id <NRXValue>(^NRXBlockFunctionBlock)(NSArray *arguments);
 
 
 @interface NRXDelegateCallbackNode : NRXExpressionNode <NRXCallable, NRXValue>
-- (id)initWithName:(NSString *)name selector:(SEL)selector;
+- (id)initWithTarget:(id)target selector:(SEL)selector;
 @end
 
 
