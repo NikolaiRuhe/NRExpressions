@@ -56,106 +56,190 @@
 #define expectOutput(string) STAssertEqualObjects(_testOutput, string, @"unexpected output");
 #define expectResult(string) STAssertEqualObjects(_testResult, string, @"unexpected result");
 
-- (void)testPlainStatements
+- (void)testEmptyScript
 {
 	evaluate(@"");
 	expectOutput(@"");
 	expectResult(@"(null)");
-	
-	evaluate(@"");
-	expectOutput(@"");
-	expectResult(@"(null)");
-	
+}
+
+- (void)testEmptyExpression
+{
 	evaluate(@";");
 	expectOutput(@"");
 	expectResult(@"(null)");
-	
+}
+
+- (void)testComment
+{
 	evaluate(@"// C++ style comment");
 	expectOutput(@"");
 	expectResult(@"(null)");
-	
+}
+
+- (void)testCComment
+{
 	evaluate(@"/* C-style comment */");
 	expectOutput(@"");
 	expectResult(@"(null)");
-	
+}
+
+- (void)testPrintStatement
+{
 	evaluate(@"print;");
 	expectOutput(@"\n");
 	expectResult(@"(null)");
-	
+}
+
+- (void)testPrintWithArgument
+{
 	evaluate(@"print 1;");
 	expectOutput(@"1\n");
 	expectResult(@"(null)");
-	
+}
+
+- (void)testHelloWorld
+{
 	evaluate(@"print \"Hello, World!\";");
 	expectOutput(@"Hello, World!\n");
 	expectResult(@"(null)");
+}
 
+- (void)testLessThan
+{
 	evaluate(@"print 1 < 2 ? 'yes' : 'no';");
 	expectOutput(@"yes\n");
 	expectResult(@"(null)");
+}
+
+- (void)testLessOrEqual
+{
 	evaluate(@"print 1 <= 2 ? 'yes' : 'no';");
 	expectOutput(@"yes\n");
 	expectResult(@"(null)");
+}
+
+- (void)testEqual
+{
 	evaluate(@"print 1 == 1 ? 'yes' : 'no';");
 	expectOutput(@"yes\n");
 	expectResult(@"(null)");
+}
+
+- (void)testNotEqual
+{
 	evaluate(@"print 1 != 2 ? 'yes' : 'no';");
 	expectOutput(@"yes\n");
 	expectResult(@"(null)");
+}
+
+- (void)testGreaterThan
+{
 	evaluate(@"print 2 > 1 ? 'yes' : 'no';");
 	expectOutput(@"yes\n");
 	expectResult(@"(null)");
+}
+
+- (void)testGreaterOrEqual
+{
 	evaluate(@"print 2 >= 1 ? 'yes' : 'no';");
 	expectOutput(@"yes\n");
 	expectResult(@"(null)");
+}
 
+- (void)testAddition
+{
 	evaluate(@"print 1 + 1;");
 	expectOutput(@"2\n");
 	expectResult(@"(null)");
+}
+
+- (void)testSubtraction
+{
 	evaluate(@"print 3 - 1;");
 	expectOutput(@"2\n");
 	expectResult(@"(null)");
+}
+
+- (void)testMultiplication
+{
 	evaluate(@"print 1 * 2;");
 	expectOutput(@"2\n");
 	expectResult(@"(null)");
+}
+
+- (void)testDivision
+{
 	evaluate(@"print 4 / 2;");
 	expectOutput(@"2\n");
 	expectResult(@"(null)");
+}
+
+- (void)testModulus
+{
 	evaluate(@"print 5 % 3;");
 	expectOutput(@"2\n");
 	expectResult(@"(null)");
+}
 
+- (void)testListSubscript
+{
 	evaluate(@"print [1, 2, 3][1];");
 	expectOutput(@"2\n");
 	expectResult(@"(null)");
+}
 
+- (void)testWhereExpression
+{
 	evaluate(@"print ([1, 2, 3] where x : x % 2 == 0).count;");
 	expectOutput(@"1\n");
 	expectResult(@"(null)");
+}
 
+- (void)testMapExpression
+{
+	evaluate(@"print ([1, 2, 3] map x : x * 2) == [2, 4, 6] ? 'YES' : 'NO';");
+	expectOutput(@"YES\n");
+	expectResult(@"(null)");
+}
+
+- (void)testDictionarySubscript
+{
 	evaluate(@"print ['1' : 1, '2' : 2, '3' : 3]['2'];");
 	expectOutput(@"2\n");
 	expectResult(@"(null)");
 }
 
-- (void)testSimpleConstructs
+- (void)testWhileLoop
 {
 	evaluate(@"x := 0; while (x < 1000) x := x + 1; print x;");
 	expectOutput(@"1000\n");
 	expectResult(@"(null)");
+}
 
+- (void)testFunctionDefinitionAndCall
+{
 	evaluate(@"foo() {} foo();");
 	expectOutput(@"");
 	expectResult(@"(null)");
-	
+}
+
+- (void)testFunctionWithArguments
+{
 	evaluate(@"foo(a, b) { return a + b; } print foo(\"answer: \", \"42\");");
 	expectOutput(@"answer: 42\n");
 	expectResult(@"(null)");
+}
 
+- (void)testRecursiveFunction
+{
 	evaluate(@"fac(v) { return v == 0 ? 1 : fac(v - 1) * v; } return fac(5);");
 	expectOutput(@"");
 	expectResult(@"120");
+}
 
+- (void)testTryCatch
+{
 	evaluate(@"try {\n a := 1 / 0;\n} catch (e) {\n return e;\n}");
 	expectOutput(@"");
 	expectResult(@"MathError: division by zero");
