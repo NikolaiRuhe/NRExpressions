@@ -320,7 +320,7 @@
 	EVALUATE_EXPRESSION(object, self.object);
 
 	if (object == nil || object == [NSNull null])
-		return nil;
+		return [NSNull null];
 
 	if ([object respondsToSelector:_selector])
 	{
@@ -635,6 +635,21 @@
 	}];
 
 	return [NRXBoolean booleanWithBool:loopResult != nil];
+}
+@end
+
+@implementation NRXExceptNode
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
+{
+	id <NRXValue> primary = [self.left evaluate:interpreter];
+
+	if (! [primary isKindOfClass:[NRXInterruptExecutionResult class]]) {
+		if (primary == nil)
+			primary = [NSNull null];
+		return primary;
+	}
+
+	return [self.right evaluate:interpreter];
 }
 @end
 

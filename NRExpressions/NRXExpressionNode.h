@@ -112,6 +112,7 @@
 @interface NRXDivisionNode        : NRXBinaryInfixOperationNode @end
 @interface NRXModulusNode         : NRXBinaryInfixOperationNode @end
 @interface NRXContainsNode        : NRXBinaryInfixOperationNode @end
+@interface NRXExceptNode          : NRXBinaryInfixOperationNode @end
 @interface NRXLogicalAndNode      : NRXBinaryInfixOperationNode @end
 @interface NRXLogicalOrNode       : NRXBinaryInfixOperationNode @end
 @interface NRXLessThanNode        : NRXBinaryInfixOperationNode @end

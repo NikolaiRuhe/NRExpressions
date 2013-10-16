@@ -94,6 +94,7 @@ static inline void convertDataToString(union YYSTYPE *yylval)
 "true"          { yylval->node = (__bridge_retained void *)[NRXBoolean yes]; RETURN_TOKEN(BOOLTOKEN); }
 "false"         { yylval->node = (__bridge_retained void *)[NRXBoolean no];  RETURN_TOKEN(BOOLTOKEN); }
 "NULL"          { yylval->node = (__bridge_retained void *)[NSNull null]; RETURN_TOKEN(NULLTOKEN); }
+"except"        RETURN_TOKEN(EXCEPT);
 "try"           RETURN_TOKEN(TRY);
 "catch"         RETURN_TOKEN(CATCH);
 "assert"        RETURN_TOKEN(ASSERT);

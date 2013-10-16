@@ -23,6 +23,8 @@ typedef enum NRXComparisonResult : NSInteger {
 + (NSString *)nrx_typeString;
 - (NSString *)nrx_typeString;
 
+- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument;
+
 - (id <NRXValue>)nrx_promoteToValue;
 
 - (id <NRXValue>)nrx_negation;
@@ -37,8 +39,6 @@ typedef enum NRXComparisonResult : NSInteger {
 - (id <NRXValue>)nrx_setValue:(id <NRXValue>)value forProperty:(NSString *)name;
 
 - (id <NRXValue>)nrx_subscript:(id <NRXValue>)argument;
-
-- (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument;
 
 - (id <NRXValue>)nrx_traverseWithBlock:(id <NRXValue>(^)(id <NRXValue> element))block;
 

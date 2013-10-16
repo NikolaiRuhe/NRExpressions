@@ -66,6 +66,7 @@ static inline void *push(id object)
 %nonassoc IFX
 %nonassoc ELSE
 
+%left EXCEPT
 %left '?' ':'
 %left WHERE
 %left MAP
@@ -163,6 +164,7 @@ expr:
   | expr '%' expr                            { $$ = push([[NRXModulusNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr '<' expr                            { $$ = push([[NRXLessThanNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr '>' expr                            { $$ = push([[NRXGreaterThanNode alloc] initWithLeft:pop($1) right:pop($3)]); }
+  | expr EXCEPT expr                         { $$ = push([[NRXExceptNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr CONTAINS expr                       { $$ = push([[NRXContainsNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr AND expr                            { $$ = push([[NRXLogicalAndNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr OR expr                             { $$ = push([[NRXLogicalOrNode alloc] initWithLeft:pop($1) right:pop($3)]); }

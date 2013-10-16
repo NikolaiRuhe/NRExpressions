@@ -217,6 +217,27 @@
 	expectResult(@"(null)");
 }
 
+- (void)testExceptExpressionFail
+{
+	evaluate(@"print fail except 'YES';");
+	expectOutput(@"YES\n");
+	expectResult(@"(null)");
+}
+
+- (void)testExceptExpressionSuccess
+{
+	evaluate(@"print 'YES' except 'NO';");
+	expectOutput(@"YES\n");
+	expectResult(@"(null)");
+}
+
+- (void)testDivisionByZero
+{
+	evaluate(@"print 1 / 0 except 'YES';");
+	expectOutput(@"YES\n");
+	expectResult(@"(null)");
+}
+
 - (void)testDictionarySubscript
 {
 	evaluate(@"print ['1' : 1, '2' : 2, '3' : 3]['2'];");
