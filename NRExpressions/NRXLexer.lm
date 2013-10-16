@@ -87,6 +87,7 @@ static inline void convertDataToString(union YYSTYPE *yylval)
 "while"         RETURN_TOKEN(WHILE);
 "for"           RETURN_TOKEN(FOR);
 "in"            RETURN_TOKEN(IN);
+"contains"      RETURN_TOKEN(CONTAINS);
 "if"            RETURN_TOKEN(IF);
 "else"          RETURN_TOKEN(ELSE);
 "print"         RETURN_TOKEN(PRINT);

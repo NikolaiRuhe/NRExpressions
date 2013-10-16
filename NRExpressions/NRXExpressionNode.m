@@ -45,7 +45,7 @@
 {
 	assert([self.value isKindOfClass:[NSArray class]]);
 
-	NSMutableArray *resultArray = [NSMutableArray array];
+	NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:[(NSArray *)(self.value) count]];
 	for (NRXExpressionNode *element in (NSArray *)(self.value))
 	{
 		EVALUATE_EXPRESSION(elementValue, element);
@@ -397,23 +397,26 @@
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_VALUE(list, self.list, YES);
-	if (! [list isKindOfClass:[NSArray class]])
-		return [NRXTypeError errorWithFormat:@"'where' operator: not a list, got %@", [list nrx_typeString]];
 
-	NSMutableArray *result = [NSMutableArray arrayWithCapacity:[((NSArray *)list) count]];
-	for (id <NRXValue> element in (NSArray *)list) {
-		[interpreter pushScope];
-		[interpreter assignValue:element toSymbol:self.variable];
+	if (! [list respondsToSelector:@selector(nrx_traverseWithBlock:)])
+		return [NRXArgumentError errorWithFormat:@"'where' operator: not a container: %@", [list nrx_typeString]];
 
-		EVALUATE_BOOL_EXPRESSION(condition, self.condition);
+	NSMutableArray *result = [NSMutableArray array];
 
-		if (condition)
-			[result addObject:element];
+	id <NRXValue> loopResult = [list nrx_traverseWithBlock:^id <NRXValue>(id <NRXValue> element) {
+		return [interpreter performInNestedScope:^id<NRXValue>{
+			[interpreter assignValue:element toSymbol:self.variable];
 
-		[interpreter popScope];
-	}
+			EVALUATE_BOOL_EXPRESSION(condition, self.condition);
 
-	return result;
+			if (condition)
+				[result addObject:element];
+
+			return nil;
+		}];
+	}];
+
+	return loopResult != nil ? loopResult : result;
 }
 @end
 
@@ -440,25 +443,27 @@
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_VALUE(list, self.list, YES);
-	if (! [list isKindOfClass:[NSArray class]])
-		return [NRXTypeError errorWithFormat:@"'map' operator: not a list, got %@", [list nrx_typeString]];
+
+	if (! [list respondsToSelector:@selector(nrx_traverseWithBlock:)])
+		return [NRXArgumentError errorWithFormat:@"'map' operator: not a container: %@", [list nrx_typeString]];
 
 	NSMutableArray *result = [NSMutableArray arrayWithCapacity:[((NSArray *)list) count]];
-	for (id <NRXValue> element in (NSArray *)list) {
-		[interpreter pushScope];
-		[interpreter assignValue:element toSymbol:self.variable];
 
-		EVALUATE_EXPRESSION(expression, self.expression);
+	id <NRXValue> loopResult = [list nrx_traverseWithBlock:^id <NRXValue>(id <NRXValue> element) {
+		return [interpreter performInNestedScope:^id<NRXValue>{
+			[interpreter assignValue:element toSymbol:self.variable];
 
-		if (expression == nil)
-			expression = [NSNull null];
+			EVALUATE_EXPRESSION(expression, self.expression);
 
-		[result addObject:expression];
+			if (expression == nil)
+				expression = [NSNull null];
 
-		[interpreter popScope];
-	}
+			[result addObject:expression];
+			return nil;
+		}];
+	}];
 
-	return result;
+	return loopResult != nil ? loopResult : result;
 }
 @end
 
@@ -616,20 +621,20 @@
 }
 @end
 
-@implementation NRXListInNode
+@implementation NRXContainsNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {
 	EVALUATE_VALUE(left,  self.left,  NO);
 	EVALUATE_VALUE(right, self.right, NO);
 
-	if (! [right isKindOfClass:[NSArray class]])
-		return [NRXTypeError errorWithFormat:@"'in' operator: not a list, got %@", [right nrx_typeString]];
+	if (! [left respondsToSelector:@selector(nrx_traverseWithBlock:)])
+		return [NRXArgumentError errorWithFormat:@"'contains' operator: not a container: %@", [left nrx_typeString]];
 
-	for (id <NRXValue> element in (NSArray *)right) {
-		if ([element nrx_compare:left] == NRXOrderedSame)
-			return [NRXBoolean yes];
-	}
-	return [NRXBoolean no];
+	id <NRXValue> loopResult = [left nrx_traverseWithBlock:^id <NRXValue>(id <NRXValue> element) {
+		return [element nrx_compare:right] == NRXOrderedSame ? element : nil;
+	}];
+
+	return [NRXBoolean booleanWithBool:loopResult != nil];
 }
 @end
 

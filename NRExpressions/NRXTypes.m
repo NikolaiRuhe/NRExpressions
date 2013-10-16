@@ -81,6 +81,18 @@
 	return self[idx];
 }
 
+- (id <NRXValue>)nrx_traverseWithBlock:(id <NRXValue>(^)(id <NRXValue> element))block;
+{
+	for (id<NRXValue> element in self) {
+		@autoreleasepool {
+			id <NRXValue> result = block(element);
+			if (result != nil)
+				return result;
+		}
+	}
+	return nil;
+}
+
 @end
 
 
@@ -106,6 +118,18 @@
 		return [NRXArgumentError errorWithFormat:@"unknown key: %@", argument];
 
 	return result;
+}
+
+- (id <NRXValue>)nrx_traverseWithBlock:(id <NRXValue>(^)(id <NRXValue> element))block;
+{
+	for (id<NRXValue> key in self) {
+		@autoreleasepool {
+			id <NRXValue> result = block(key);
+			if (result != nil)
+				return result;
+		}
+	}
+	return nil;
 }
 
 @end

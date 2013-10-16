@@ -258,36 +258,33 @@
 - (id <NRXValue>)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
 {
 	// create a function local scope
-	if (! [interpreter pushEmptyScope])
-		return [NRXInterpreterError errorWithFormat:@"call stack exceeded"];
-	
-	// check argument count
-	NSUInteger parameterCount = [self.parameterList count];
-	NSUInteger argumentCount  = [arguments count];
+	return [interpreter performInNewScope:^id<NRXValue>{
 
-	if (parameterCount != argumentCount)
-		return [NRXArgumentError errorWithFormat:@"argument mismatch: function %@ takes: %lu, given: %lu", self.name, (unsigned long)parameterCount, (unsigned long)argumentCount];
+		// check argument count
+		NSUInteger parameterCount = [self.parameterList count];
+		NSUInteger argumentCount  = [arguments count];
 
-	// push arguments into local scope
-	for (NSUInteger idx = 0; idx < argumentCount; ++idx)
-	{
-		NRXSymbolNode *symbol = self.parameterList[idx];
-		assert([symbol isKindOfClass:[NRXSymbolNode class]]);
-		id <NRXValue> argument = arguments[idx];
-		[interpreter assignValue:argument toSymbol:symbol.name];
-	}
+		if (parameterCount != argumentCount)
+			return [NRXArgumentError errorWithFormat:@"argument mismatch: function %@ takes: %lu, given: %lu", self.name, (unsigned long)parameterCount, (unsigned long)argumentCount];
 
-	// call function body
-	id <NRXValue> result = [self.body evaluate:interpreter];
+		// push arguments into local scope
+		for (NSUInteger idx = 0; idx < argumentCount; ++idx)
+		{
+			NRXSymbolNode *symbol = self.parameterList[idx];
+			assert([symbol isKindOfClass:[NRXSymbolNode class]]);
+			id <NRXValue> argument = arguments[idx];
+			[interpreter assignValue:argument toSymbol:symbol.name];
+		}
 
-	// restore scope
-	[interpreter popScope];
+		// call function body
+		id <NRXValue> result = [self.body evaluate:interpreter];
 
-	// return results of return statements
-	if ([result isKindOfClass:[NRXReturnResult class]])
-		return ((NRXReturnResult *)result).value;
-
-	return result;
+		// return results of return statements
+		if ([result isKindOfClass:[NRXReturnResult class]])
+			result = ((NRXReturnResult *)result).value;
+		
+		return result;
+	}];
 }
 
 @end
@@ -372,22 +369,18 @@
 - (id <NRXValue>)callWithArguments:(NSArray *)arguments interpreter:(NRXInterpreter *)interpreter
 {
 	// create a function local scope
-	if (! [interpreter pushEmptyScope])
-		return [NRXInterpreterError errorWithFormat:@"call stack exceeded"];
-
-	// call delegate
+	return [interpreter performInNewScope:^id<NRXValue>{
+		// call delegate
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-	id <NRXValue> result = [interpreter.delegate performSelector:_selector withObject:arguments];
+		id <NRXValue> result = [interpreter.delegate performSelector:_selector withObject:arguments];
 #pragma clang diagnostic pop
 
-	// restore scope
-	[interpreter popScope];
+		if ([result isKindOfClass:[NRXReturnResult class]])
+			result = ((NRXReturnResult *)result).value;
 
-	if ([result isKindOfClass:[NRXReturnResult class]])
-		return ((NRXReturnResult *)result).value;
-
-	return result;
+		return result;
+	}];
 }
 
 @end

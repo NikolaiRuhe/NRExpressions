@@ -38,10 +38,8 @@
 - (NSMutableArray *)stack
 {
 	if (_stack == nil)
-	{
-		_stack = [[NSMutableArray alloc] init];
-		[self pushEmptyScope];
-	}
+		_stack = [NSMutableArray arrayWithObject:[NSMutableDictionary dictionary]];
+
 	return _stack;
 }
 
@@ -125,19 +123,34 @@
 	return YES;
 }
 
-- (BOOL)pushScope
+- (id <NRXValue>)performInScope:(id <NRXValue>(^)(void))block nested:(BOOL)nested
 {
-	return [self pushScope:[NSMutableDictionary dictionaryWithDictionary:[self currentScope]]];
+	NSMutableArray *stack = self.stack;
+
+	if (self.maxCallDepth != 0 && [stack count] > self.maxCallDepth)
+		return [NRXInterpreterError errorWithFormat:@"call stack exceeded"];
+
+	if (nested) {
+		[stack addObject:[NSMutableDictionary dictionaryWithDictionary:[self currentScope]]];
+	} else {
+		[stack addObject:[NSMutableDictionary dictionary]];
+	}
+
+	id <NRXValue> result = block();
+
+	[stack removeLastObject];
+
+	return result;
 }
 
-- (BOOL)pushEmptyScope
+- (id <NRXValue>)performInNestedScope:(id <NRXValue>(^)(void))block
 {
-	return [self pushScope:[NSMutableDictionary dictionary]];
+	return [self performInScope:block nested:YES];
 }
 
-- (void)popScope
+- (id <NRXValue>)performInNewScope:(id <NRXValue>(^)(void))block
 {
-	[self.stack removeLastObject];
+	return [self performInScope:block nested:NO];
 }
 
 - (BOOL)timeout

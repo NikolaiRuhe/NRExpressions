@@ -189,6 +189,20 @@
 	expectResult(@"(null)");
 }
 
+- (void)testTrueContainsExpression
+{
+	evaluate(@"print [1, 2, 3] contains 2 ? 'YES' : 'NO';");
+	expectOutput(@"YES\n");
+	expectResult(@"(null)");
+}
+
+- (void)testFalseContainsExpression
+{
+	evaluate(@"print [1, 2, 3] contains 0 ? 'YES' : 'NO';");
+	expectOutput(@"NO\n");
+	expectResult(@"(null)");
+}
+
 - (void)testWhereExpression
 {
 	evaluate(@"print ([1, 2, 3] where x : x % 2 == 0).count;");

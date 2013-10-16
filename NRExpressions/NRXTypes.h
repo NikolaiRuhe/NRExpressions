@@ -40,6 +40,8 @@ typedef enum NRXComparisonResult : NSInteger {
 
 - (NRXComparisonResult)nrx_compare:(id <NRXValue>)argument;
 
+- (id <NRXValue>)nrx_traverseWithBlock:(id <NRXValue>(^)(id <NRXValue> element))block;
+
 @end
 
 

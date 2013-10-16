@@ -37,9 +37,8 @@ typedef void (^NRXErrorBlock)(NSString *message, NSUInteger lineNumber);
 
 - (id <NRXValue>)lookupNode:(NRXLookupNode *)lookupNode;
 
-- (BOOL)pushScope;
-- (BOOL)pushEmptyScope;
-- (void)popScope;
+- (id <NRXValue>)performInNestedScope:(id <NRXValue>(^)(void))block;
+- (id <NRXValue>)performInNewScope:(id <NRXValue>(^)(void))block;
 
 - (void)print:(id <NRXValue>)value;
 
