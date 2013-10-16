@@ -419,6 +419,51 @@
 
 
 
+@implementation NRXMapNode
+
+@synthesize list = _list;
+@synthesize variable = _variable;
+@synthesize expression = _expression;
+
+- (id)initWithList:(NRXExpressionNode *)list variable:(NSString *)variable expression:(NRXExpressionNode *)expression
+{
+	self = [self init];
+	if (self != nil)
+	{
+		_list = list;
+		_variable = [variable copy];
+		_expression = expression;
+	}
+	return self;
+}
+
+- (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
+{
+	EVALUATE_VALUE(list, self.list, YES);
+	if (! [list isKindOfClass:[NSArray class]])
+		return [NRXTypeError errorWithFormat:@"'map' operator: not a list, got %@", [list nrx_typeString]];
+
+	NSMutableArray *result = [NSMutableArray arrayWithCapacity:[((NSArray *)list) count]];
+	for (id <NRXValue> element in (NSArray *)list) {
+		[interpreter pushScope];
+		[interpreter assignValue:element toSymbol:self.variable];
+
+		EVALUATE_EXPRESSION(expression, self.expression);
+
+		if (expression == nil)
+			expression = [NSNull null];
+
+		[result addObject:expression];
+
+		[interpreter popScope];
+	}
+
+	return result;
+}
+@end
+
+
+
 @implementation NRXNegationNode
 - (id <NRXValue>)evaluate:(NRXInterpreter *)interpreter
 {

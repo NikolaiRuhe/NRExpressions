@@ -81,6 +81,7 @@ static inline void convertDataToString(union YYSTYPE *yylval)
 "=="            RETURN_TOKEN(EQ);
 "="             RETURN_TOKEN(EQ);
 "where"         RETURN_TOKEN(WHERE);
+"map"           RETURN_TOKEN(MAP);
 "!="            RETURN_TOKEN(NE);
 ":="            RETURN_TOKEN(ASSIGNMENT);
 "while"         RETURN_TOKEN(WHILE);

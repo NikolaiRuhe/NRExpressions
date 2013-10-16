@@ -27,7 +27,6 @@
 {
 	_testResult = [[NSMutableString alloc] init];
 	_testOutput = [[NSMutableString alloc] init];
-//	NRExpression *testExpression = [[NRExpression alloc] init];
 
 	BOOL __block error = NO;
 	NRXBlockNode *rootNode = [NRXInterpreter parseSourceString:sourceString

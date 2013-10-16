@@ -68,6 +68,7 @@ static inline void *push(id object)
 
 %left '?' ':'
 %left WHERE
+%left MAP
 %left OR
 %left AND
 %left GE LE EQ NE '>' '<'
@@ -153,6 +154,7 @@ expr:
   | '!' expr %prec UNOT                      { $$ = push([[NRXLogicalNegationNode alloc] initWithArgument:pop($2)]); }
   | expr '?' expr ':' expr                   { $$ = push([[NRXTernaryConditionNode alloc] initWithCondition:pop($1) positiveExpression:pop($3) negativeExpression:pop($5)]); }
   | expr WHERE SYMBOL ':' expr               { $$ = push([[NRXWhereNode alloc] initWithList:pop($1) variable:pop($3) condition:pop($5)]); }
+  | expr MAP SYMBOL ':' expr                 { $$ = push([[NRXMapNode alloc] initWithList:pop($1) variable:pop($3) expression:pop($5)]); }
   | expr '+' expr                            { $$ = push([[NRXAdditionNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr '-' expr                            { $$ = push([[NRXSubtractionNode alloc] initWithLeft:pop($1) right:pop($3)]); }
   | expr '*' expr                            { $$ = push([[NRXMultiplicationNode alloc] initWithLeft:pop($1) right:pop($3)]); }
