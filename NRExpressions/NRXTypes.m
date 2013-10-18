@@ -207,9 +207,7 @@
 
 - (id <NRXValue>)nrx_negation
 {
-	NSDecimal decimal = [self decimalValue];
-	decimal._isNegative = decimal._isNegative ? 0 : 1;
-	return [NSDecimalNumber decimalNumberWithDecimal:decimal];
+	return [[NSDecimalNumber zero] decimalNumberBySubtracting:self];
 }
 
 - (id <NRXValue>)nrx_addition:(id <NRXValue>)argument
