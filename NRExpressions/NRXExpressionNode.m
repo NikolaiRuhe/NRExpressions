@@ -330,12 +330,7 @@
 #pragma clang diagnostic pop
 	}
 
-	if ([object respondsToSelector:@selector(nrx_valueForProperty:)])
-	{
-		return [object nrx_valueForProperty:self.propertyName];
-	}
-
-	return [NRXLookupError errorWithFormat:@"no member '%@' on object of type %@", self.propertyName, [object nrx_typeString]];
+	return [object nrx_valueForProperty:self.propertyName];
 }
 
 @end

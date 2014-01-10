@@ -42,6 +42,11 @@
 	return NRXUnrelated;
 }
 
+- (id <NRXValue>)nrx_valueForProperty:(NSString *)name
+{
+	return [NRXLookupError errorWithFormat:@"no member '%@' on object of type %@", name, [self nrx_typeString]];
+}
+
 @end
 
 
@@ -66,6 +71,39 @@
 - (NSDecimalNumber *)nrx_count
 {
 	return [NSDecimalNumber decimalNumberWithMantissa:[self count] exponent:0 isNegative:NO];
+}
+
+- (id <NRXValue>)nrx_valueForProperty:(NSString *)name
+{
+	if (! [name isEqualToString:@"indexOf"])
+		return [super nrx_valueForProperty:name];
+
+	return [[NRXBlockFunctionNode alloc] initWithName:name
+										parameterList:@[[NSObject class]]
+												block:^id<NRXValue>(NSArray *arguments) {
+													return [self nrx_indexOf:arguments[0]];
+												}];
+}
+
+
+- (id <NRXValue>)nrx_indexOf:(id <NRXValue>)element
+{
+	NSUInteger fastIndex = [self indexOfObjectIdenticalTo:element];
+	if (fastIndex != NSNotFound)
+		return [NSDecimalNumber decimalNumberWithMantissa:fastIndex exponent:0 isNegative:NO];
+
+	__block NSUInteger index = NSNotFound;
+	[self enumerateObjectsUsingBlock:^(id <NRXValue> obj, NSUInteger idx, BOOL *stop) {
+		if ([element nrx_compare:obj] == NRXOrderedSame) {
+			*stop = YES;
+			index = idx;
+		}
+	}];
+
+	if (index == NSNotFound)
+		return [NRXLookupError errorWithFormat:@"%@: element not found"];
+
+	return [NSDecimalNumber decimalNumberWithMantissa:index exponent:0 isNegative:NO];
 }
 
 - (id <NRXValue>)nrx_subscript:(id <NRXValue>)argument

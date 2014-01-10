@@ -50,6 +50,7 @@ typedef enum NRXComparisonResult : NSInteger {
 
 @interface NSArray (NRXValueAdditions) <NRXValue>
 - (NSDecimalNumber *)nrx_count;
+- (id <NRXValue>)nrx_indexOf:(id <NRXValue>)element;
 @end
 
 @interface NSDictionary (NRXValueAdditions) <NRXValue>
