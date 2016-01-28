@@ -21,6 +21,7 @@
 #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
 #pragma clang diagnostic ignored "-Wunreachable-code"
 #pragma clang diagnostic ignored "-Wmissing-variable-declarations"
+#pragma clang diagnostic ignored "-Wconditional-uninitialized"
 
 static inline id pop(void *object) { return (__bridge_transfer id)(object); }
 static inline void *push(id object)
